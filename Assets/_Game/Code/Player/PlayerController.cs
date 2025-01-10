@@ -1,10 +1,12 @@
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField] private PlayerInteractionSettings _playerInteractionSettings;
     [SerializeField] private float _speed = 2f;
     private Rigidbody _rb;
 
@@ -20,6 +22,11 @@ public class PlayerController : NetworkBehaviour
         if (!IsOwner)
         {
             return;
+        }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            CheckForInteractableCollision();
         }
 
         UpdateMovement();
@@ -44,6 +51,22 @@ public class PlayerController : NetworkBehaviour
         }
 
         UpdateMovementBooleans();
+    }
+
+    private void CheckForInteractableCollision()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position,
+            _playerInteractionSettings.interactableRadius,
+            _playerInteractionSettings.interactableLayer);
+        foreach (var hitCollider in hitColliders)
+        {
+            switch (hitCollider.GetComponent<IInteractable>())
+            {
+                case Chest chest:
+                    chest.Interact();
+                    break;
+            }
+        }
     }
 
     private void UpdateMovementBooleans()
