@@ -1,9 +1,11 @@
+using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : NetworkBehaviour
 {
-    [SerializeField] private float _speed = 2.0f;
+    [SerializeField] private float _speed = 2f;
     private Rigidbody _rb;
 
     private bool _isWalking;
@@ -15,6 +17,11 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (!IsOwner)
+        {
+            return;
+        }
+
         UpdateMovement();
     }
 
@@ -22,12 +29,13 @@ public class PlayerController : MonoBehaviour
     {
         float moveHorizontal = Input.GetAxis("Horizontal");
         float moveVertical = Input.GetAxis("Vertical");
-        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical).normalized * _speed * Time.deltaTime;
+        Vector3 movement = new Vector3(moveHorizontal, 0.0f, moveVertical).normalized * _speed * Time.fixedDeltaTime;
         if (movement != Vector3.zero)
         {
             _rb.MovePosition(transform.position + movement);
+            Debug.Log(movement);
             Quaternion targetRotation = Quaternion.LookRotation(movement);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * _speed);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _speed);
             _isWalking = true;
         }
         else
