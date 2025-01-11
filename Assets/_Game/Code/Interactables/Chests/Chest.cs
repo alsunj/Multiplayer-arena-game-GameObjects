@@ -9,7 +9,9 @@ public class Chest : NetworkBehaviour, IInteractable
 {
     private GameObject chestLid;
 
-    [ServerRpc]
+    private bool chestFound = false;
+
+    [ServerRpc(RequireOwnership = false)]
     private void CmdOpenChestForEveryoneServerRpc()
     {
         RpcOpenChestForEveryoneClientRpc();
@@ -38,13 +40,29 @@ public class Chest : NetworkBehaviour, IInteractable
         CmdOpenChestForEveryoneServerRpc();
     }
 
+    private void ChestFoundForOtherClients()
+    {
+        chestLid.transform.DORotate(chestLid.transform.eulerAngles +
+                                    new Vector3(-130, 0, 0), 1f)
+            .SetEase(Ease.OutBounce);
+    }
+
+
     public void Interact()
     {
-        ChestFound();
+        if (!chestFound)
+        {
+            ChestFound();
+            chestFound = true;
+        }
     }
 
     public void Interacted()
     {
-        ChestFound();
+        if (!chestFound)
+        {
+            ChestFoundForOtherClients();
+            chestFound = true;
+        }
     }
 }

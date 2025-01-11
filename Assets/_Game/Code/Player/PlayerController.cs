@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -10,19 +11,25 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float _speed = 2f;
     private Rigidbody _rb;
 
+    private Camera _camera;
+    public Vector3 offset = new Vector3(0, 7.4f, -6.4f);
+    public Vector3 eulerAngles = new Vector3(40.45f, 0, 0);
+
     private bool _isWalking;
+
 
     void Start()
     {
+        _camera = GetComponentInChildren<Camera>();
         _rb = GetComponent<Rigidbody>();
     }
 
     void Update()
     {
-        if (!IsOwner)
-        {
-            return;
-        }
+        // if (!IsOwner)
+        // {
+        //     return;
+        // }
 
         if (Input.GetKeyDown(KeyCode.E))
         {
@@ -43,6 +50,8 @@ public class PlayerController : NetworkBehaviour
             Debug.Log(movement);
             Quaternion targetRotation = Quaternion.LookRotation(movement);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _speed);
+            _camera.transform.rotation = Quaternion.Slerp(_camera.transform.rotation,
+                targetRotation * Quaternion.Euler(eulerAngles), _speed);
             _isWalking = true;
         }
         else
@@ -50,7 +59,13 @@ public class PlayerController : NetworkBehaviour
             _isWalking = false;
         }
 
+        UpdateCamera();
         UpdateMovementBooleans();
+    }
+
+    private void UpdateCamera()
+    {
+        _camera.transform.position = gameObject.transform.position + offset;
     }
 
     private void CheckForInteractableCollision()
