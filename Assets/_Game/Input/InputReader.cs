@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 [CreateAssetMenu(fileName = "InputReader", menuName = "Scriptable Objects/InputReader")]
 public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions, IInputHandler
 {
+    private InputSystem_Actions inputActions;
     public event Action<Vector2> MoveEvent;
     public event Action<Vector2> LookEvent;
     public event Action InteractEvent;
@@ -12,6 +13,27 @@ public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions,
     public event Action<bool> SprintEvent;
     public event Action<bool> CrouchEvent;
     public event Action AttackEvent;
+
+    public void InitializeInput()
+    {
+        if (inputActions == null)
+        {
+            inputActions = new InputSystem_Actions();
+            inputActions.Player.SetCallbacks(this);
+        }
+
+        inputActions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        if (inputActions != null)
+        {
+            inputActions.Disable();
+            inputActions.Player.RemoveCallbacks(this);
+            inputActions.Dispose();
+        }
+    }
 
     public void OnMove(InputAction.CallbackContext context)
     {
@@ -21,7 +43,7 @@ public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions,
         }
         else
         {
-            MoveEvent?.Invoke(new Vector2(0, 0));
+            MoveEvent?.Invoke(Vector2.zero);
         }
     }
 
