@@ -6,6 +6,8 @@ public class PlayerEvents
     public event Action<bool> onPlayerRun;
     public event Action onPlayerInteract;
 
+    public event Action onPlayerAttack;
+
 
     public void PlayerWalk(bool state)
     {
@@ -28,6 +30,14 @@ public class PlayerEvents
         if (onPlayerInteract != null)
         {
             onPlayerInteract();
+        }
+    }
+
+    public void PlayerAttack()
+    {
+        if (onPlayerAttack != null)
+        {
+            onPlayerAttack();
         }
     }
 }

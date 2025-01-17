@@ -1,27 +1,32 @@
-using System;
+using System.Collections;
+using DG.Tweening;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class PlayerController : NetworkBehaviour
 {
+    #region components
+
     [SerializeField] private PlayerInteractionSettings playerInteractionSettings;
     [SerializeField] private float speed = 2f;
-    [SerializeField] private InputReader _inputReader;
-
+    [SerializeField] private InputReader inputReader;
     private PlayerManager _playerManager;
     private PlayerAnimator _playerAnimator;
     private Rigidbody _rb;
     private Camera _camera;
 
-    public Vector3 offset = new Vector3(0, 7.4f, -6.4f);
-    public Vector3 cameraAngle = new Vector3(40.45f, 0, 0);
-    private Vector2 _movementInput;
-    public float fov = 60;
+    #endregion
 
+    #region cameraProperties
+
+    public Vector3 offset = new Vector3(0, 7.4f, -6.4f);
+
+    #endregion
+
+    #region movementProperties
 
     public bool enableSprint = true;
-    public bool unlimitedSprint = false;
+    public bool unlimitedSprint;
     public float sprintSpeed = 7f;
     public float sprintDuration = 5f;
     public float sprintCooldown = .5f;
@@ -31,46 +36,60 @@ public class PlayerController : NetworkBehaviour
 
     public bool playerCanMove = true;
     public float walkSpeed = 5f;
-    public bool _isWalking = false;
-
     public float maxVelocityChange = 10f;
+
+    public float fov = 60;
+    private bool _isWalking;
 
 
     // Internal Variables
-    private bool _isSprinting = false;
+    private Vector2 _movementInput;
+    private bool _isSprinting;
     private float _sprintRemaining;
-    private bool _isSprintCooldown = false;
+    private bool _isSprintCooldown;
     private float _sprintCooldownReset;
 
 
     // Internal Variables
     private Vector3 _jointOriginalPos;
-    private float _timer = 0;
+    private float _timer;
 
-    private float _walkingSoundTimer = 0;
-    private bool _isWalkingSoundCooldown = false;
+    private float _walkingSoundTimer;
+    private bool _isWalkingSoundCooldown;
 
-    private float _sprintingSoundTimer = 0;
-    private bool _isSprintingSoundCooldown = false;
+    private float _sprintingSoundTimer;
+    private bool _isSprintingSoundCooldown;
+
+    #endregion
+
+    #region attackProperties
+
+    public float hitDamage = 5f;
+    public float attackCooldown = 1f;
+    private float _attackCooldownTimer;
+
+    #endregion
 
 
     private void OnEnable()
     {
-        if (_inputReader != null)
+        if (inputReader != null)
         {
-            _inputReader.MoveEvent += OnMove;
-            _inputReader.InteractEvent += OnInteract;
-            _inputReader.SprintEvent += OnSprint;
+            inputReader.MoveEvent += OnMove;
+            inputReader.InteractEvent += OnInteract;
+            inputReader.SprintEvent += OnSprint;
+            inputReader.AttackEvent += OnAttack;
         }
     }
 
     private void OnDisable()
     {
-        if (_inputReader != null)
+        if (inputReader != null)
         {
-            _inputReader.MoveEvent -= OnMove;
-            _inputReader.InteractEvent -= OnInteract;
-            _inputReader.SprintEvent -= OnSprint;
+            inputReader.MoveEvent -= OnMove;
+            inputReader.InteractEvent -= OnInteract;
+            inputReader.SprintEvent -= OnSprint;
+            inputReader.AttackEvent -= OnAttack;
         }
     }
 
@@ -111,7 +130,7 @@ public class PlayerController : NetworkBehaviour
         }
 
 
-        _inputReader.InitializeInput();
+        inputReader.InitializeInput();
         _rb = GetComponent<Rigidbody>();
         if (_rb == null)
         {
@@ -129,11 +148,30 @@ public class PlayerController : NetworkBehaviour
         _movementInput = movement;
     }
 
+    private void OnAttack()
+    {
+        if (_attackCooldownTimer > 0) return;
+
+        Debug.Log("attack started");
+        HitObject();
+        _attackCooldownTimer = attackCooldown; // Set cooldown duration
+    }
+
+    private void OnInteract()
+    {
+        CheckForInteractableCollision();
+    }
+
     private void Update()
     {
         if (!IsOwner)
         {
             return;
+        }
+
+        if (_attackCooldownTimer > 0)
+        {
+            _attackCooldownTimer -= Time.deltaTime;
         }
 
         if (enableSprint)
@@ -274,12 +312,6 @@ public class PlayerController : NetworkBehaviour
         #endregion
     }
 
-    private void OnInteract()
-    {
-        Debug.Log("Interact");
-        CheckForInteractableCollision();
-    }
-
 
     private void UpdateCamera()
     {
@@ -296,6 +328,7 @@ public class PlayerController : NetworkBehaviour
             switch (hitCollider.GetComponent<IInteractable>())
             {
                 case Chest chest:
+                    RotatePlayerTowardsTarget(hitCollider);
                     _playerManager.playerEvents.PlayerInteract();
                     chest.Interact();
 
@@ -304,12 +337,48 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    private void UpdateMovementBooleans()
+    private void HitObject()
     {
-    }
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position,
+            playerInteractionSettings.interactableRadius,
+            playerInteractionSettings.destructableLayer);
 
-    public bool IsWalking()
+        if (hitColliders.Length > 0)
+        {
+            Collider closestCollider = null;
+            float closestDistance = float.MaxValue;
+
+            foreach (var hitCollider in hitColliders)
+            {
+                float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
+                if (distance < closestDistance)
+                {
+                    closestDistance = distance;
+                    closestCollider = hitCollider;
+                }
+            }
+
+            if (closestCollider != null)
+            {
+                switch (closestCollider.GetComponent<IDestrucable>())
+                {
+                    case Barrel barrel:
+                        RotatePlayerTowardsTarget(closestCollider);
+                        _playerManager.playerEvents.PlayerAttack();
+                        barrel.TakeDamage(hitDamage);
+                        break;
+                }
+            }
+        }
+        else
+        {
+            _playerManager.playerEvents.PlayerAttack();
+        }
+    }
+    private void RotatePlayerTowardsTarget(Collider hit)
     {
-        return _isWalking;
+        Vector3 direction = (hit.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+        transform.DORotateQuaternion(lookRotation, 0.3f);
     }
 }

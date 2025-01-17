@@ -7,6 +7,7 @@ public class PlayerAnimator : NetworkBehaviour
     private const string IS_WALKING = "IsWalking";
     private const string IS_RUNNING = "IsRunning";
     private const string IS_INTERACTING = "Interact";
+    private const string IS_ATTACKING = "Attack";
 
     private PlayerEvents _playerEvents;
     private Animator _animator;
@@ -24,6 +25,7 @@ public class PlayerAnimator : NetworkBehaviour
             _playerEvents.onPlayerWalk -= SetPlayerWalkBool;
             _playerEvents.onPlayerRun -= SetPlayerRunBool;
             _playerEvents.onPlayerInteract -= SetPlayerInteract;
+            _playerEvents.onPlayerAttack -= SetPlayerAttack;
         }
     }
 
@@ -35,6 +37,7 @@ public class PlayerAnimator : NetworkBehaviour
             _playerEvents.onPlayerWalk += SetPlayerWalkBool;
             _playerEvents.onPlayerRun += SetPlayerRunBool;
             _playerEvents.onPlayerInteract += SetPlayerInteract;
+            _playerEvents.onPlayerAttack += SetPlayerAttack;
         }
     }
 
@@ -59,5 +62,10 @@ public class PlayerAnimator : NetworkBehaviour
     private void SetPlayerInteract()
     {
         _animator.SetTrigger(IS_INTERACTING);
+    }
+
+    private void SetPlayerAttack()
+    {
+        _animator.CrossFade(IS_ATTACKING, 0.1f, -1, 0, 1f);
     }
 }
