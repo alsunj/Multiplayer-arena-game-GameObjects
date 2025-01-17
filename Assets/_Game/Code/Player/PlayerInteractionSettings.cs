@@ -4,5 +4,6 @@ using UnityEngine;
 public class PlayerInteractionSettings : ScriptableObject
 {
     public LayerMask interactableLayer;
+    public LayerMask destructableLayer;
     public float interactableRadius = 0.2f;
 }

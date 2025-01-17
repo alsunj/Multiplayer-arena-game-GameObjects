@@ -9,13 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a7ff7a2629b1f44d85e061574db1532, type: 3}
-  m_Name: PlayerInteractionSettings
+  m_Script: {fileID: 11500000, guid: f0865dc671f389940b7c393a0a448838, type: 3}
+  m_Name: BarrelSettings
   m_EditorClassIdentifier: 
-  interactableLayer:
-    serializedVersion: 2
-    m_Bits: 64
-  destructableLayer:
-    serializedVersion: 2
-    m_Bits: 128
-  interactableRadius: 2
+  health: 20
+  hitDelay: 0.6
+  shakeOffset: {x: 0.2, y: 0, z: 0.2}

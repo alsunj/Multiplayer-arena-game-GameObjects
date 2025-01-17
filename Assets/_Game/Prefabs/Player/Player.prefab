@@ -200,7 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3775582031
+  GlobalObjectIdHash: 425717663
   InScenePlacedSourceGlobalObjectIdHash: 425717663
   DeferredDespawnTick: 0
   Ownership: 1
@@ -228,10 +228,8 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   playerInteractionSettings: {fileID: 11400000, guid: 1bc75bcaab451a44d8a71f0189dc90f8, type: 2}
   speed: 2
-  _inputReader: {fileID: 11400000, guid: fae963ae99ce6d14d8bbcd54becb58d7, type: 2}
+  inputReader: {fileID: 11400000, guid: fae963ae99ce6d14d8bbcd54becb58d7, type: 2}
   offset: {x: 0, y: 7.4, z: -6.4}
-  cameraAngle: {x: 40.45, y: 0, z: 0}
-  fov: 60
   enableSprint: 1
   unlimitedSprint: 0
   sprintSpeed: 12
@@ -242,8 +240,9 @@ MonoBehaviour:
   zoomStepTime: 5
   playerCanMove: 1
   walkSpeed: 9
-  _isWalking: 0
   maxVelocityChange: 10
+  fov: 60
+  hitDamage: 5
 --- !u!136 &1490898689994747714
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -496,4 +495,11 @@ MonoBehaviour:
     TransitionDuration: 0.25
     TriggerNameHash: -662453572
     TransitionIndex: 1
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 2081823275
+    DestinationState: 1080829965
+    TransitionDuration: 0.25
+    TriggerNameHash: 1080829965
+    TransitionIndex: 2
   m_Animator: {fileID: 6949535474896224677}
