@@ -333,6 +333,11 @@ public class PlayerController : NetworkBehaviour
                     chest.Interact();
 
                     break;
+                case Door door:
+                    RotatePlayerTowardsTarget(hitCollider);
+                    _playerManager.playerEvents.PlayerInteract();
+                    door.Interact();
+                    break;
             }
         }
     }
