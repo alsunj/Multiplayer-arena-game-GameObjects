@@ -15,4 +15,4 @@ MonoBehaviour:
   interactableLayer:
     serializedVersion: 2
     m_Bits: 64
-  interactableRadius: 0.5
+  interactableRadius: 2
