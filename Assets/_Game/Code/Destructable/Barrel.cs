@@ -1,25 +1,31 @@
-using System;
 using DG.Tweening;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Barrel : MonoBehaviour, IDestrucable
+public class Barrel : NetworkBehaviour, IDestrucable
 {
     [SerializeField] private DestructableSettings _destructableSettings;
 
-    private float _health;
+    private readonly NetworkVariable<float> _health = new NetworkVariable<float>();
 
-
-    private void Start()
+    public override void OnNetworkSpawn()
     {
-        _health = _destructableSettings.health;
+        if (IsServer)
+        {
+            _health.Value = _destructableSettings.health;
+        }
+
+        _health.OnValueChanged += OnHealthChanged;
     }
 
-
-    public void TakeDamage(float damage)
+    public override void OnDestroy()
     {
-        _health -= damage;
-        Debug.Log(_health);
-        if (_health <= 0)
+        _health.OnValueChanged -= OnHealthChanged;
+    }
+
+    private void OnHealthChanged(float oldHealth, float newHealth)
+    {
+        if (newHealth <= 0)
         {
             transform.DOScale(Vector3.zero, 0.5f).SetDelay(_destructableSettings.hitDelay)
                 .OnComplete(() => gameObject.SetActive(false));
@@ -29,5 +35,53 @@ public class Barrel : MonoBehaviour, IDestrucable
             transform.DOShakePosition(0.5f, _destructableSettings.shakeOffset, 10, 90, false, true)
                 .SetDelay(_destructableSettings.hitDelay);
         }
+    }
+
+    [ClientRpc]
+    private void RpcShowBarrelDestroyForEveryOneClientRpc()
+    {
+        transform.DOScale(Vector3.zero, 0.5f).SetDelay(_destructableSettings.hitDelay)
+            .OnComplete(() => gameObject.SetActive(false));
+    }
+
+    [ClientRpc]
+    private void RpcShowBarrelDamageForEveryoneClientRpc()
+    {
+        transform.DOShakePosition(0.5f, _destructableSettings.shakeOffset, 10, 90, false, true)
+            .SetDelay(_destructableSettings.hitDelay);
+    }
+
+    public void TakeDamage(float damage)
+    {
+        RequestTakeDamageServerRpc(damage);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestTakeDamageServerRpc(float damage)
+    {
+        _health.Value -= damage;
+        Debug.Log(_health.Value);
+        Debug.Log("health value at checking: " + _health.Value);
+
+        if (_health.Value <= 0)
+        {
+            CmdShowBarrelDestroyForEveryOneServerRpc();
+        }
+        else
+        {
+            CmdShowBarrelDamageForEveryoneServerRpc();
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void CmdShowBarrelDestroyForEveryOneServerRpc()
+    {
+        RpcShowBarrelDestroyForEveryOneClientRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void CmdShowBarrelDamageForEveryoneServerRpc()
+    {
+        RpcShowBarrelDamageForEveryoneClientRpc();
     }
 }

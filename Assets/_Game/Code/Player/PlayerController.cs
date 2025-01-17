@@ -375,6 +375,7 @@ public class PlayerController : NetworkBehaviour
             _playerManager.playerEvents.PlayerAttack();
         }
     }
+
     private void RotatePlayerTowardsTarget(Collider hit)
     {
         Vector3 direction = (hit.transform.position - transform.position).normalized;
