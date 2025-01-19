@@ -7,19 +7,8 @@ public class Chest : NetworkBehaviour, IInteractable
 {
     private GameObject _chestLid;
 
-    private bool _chestFound;
+    private NetworkVariable<bool> _chestFound = new NetworkVariable<bool>(false);
 
-    [ServerRpc(RequireOwnership = false)]
-    private void CmdOpenChestForEveryoneServerRpc()
-    {
-        RpcOpenChestForEveryoneClientRpc();
-    }
-
-    [ClientRpc]
-    private void RpcOpenChestForEveryoneClientRpc()
-    {
-        Interacted();
-    }
 
     private void Awake()
     {
@@ -30,15 +19,18 @@ public class Chest : NetworkBehaviour, IInteractable
         }
     }
 
-    private void ChestFound()
+    [ServerRpc(RequireOwnership = false)]
+    private void ChestFoundServerRpc()
     {
-        _chestLid.transform.DORotate(_chestLid.transform.eulerAngles +
-                                     new Vector3(-130, 0, 0), 1f)
-            .SetEase(Ease.OutBounce);
-        CmdOpenChestForEveryoneServerRpc();
+        if (!_chestFound.Value)
+        {
+            ChestFoundClientRpc();
+            _chestFound.Value = true;
+        }
     }
 
-    private void ChestFoundForOtherClients()
+    [ClientRpc]
+    private void ChestFoundClientRpc()
     {
         _chestLid.transform.DORotate(_chestLid.transform.eulerAngles +
                                      new Vector3(-130, 0, 0), 1f)
@@ -48,19 +40,6 @@ public class Chest : NetworkBehaviour, IInteractable
 
     public void Interact()
     {
-        if (!_chestFound)
-        {
-            ChestFound();
-            _chestFound = true;
-        }
-    }
-
-    public void Interacted()
-    {
-        if (!_chestFound)
-        {
-            ChestFoundForOtherClients();
-            _chestFound = true;
-        }
+        ChestFoundServerRpc();
     }
 }
