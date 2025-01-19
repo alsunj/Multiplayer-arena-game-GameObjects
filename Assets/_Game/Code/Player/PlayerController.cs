@@ -70,6 +70,11 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
+    #region PickupPropertios
+
+    private bool isRightHandFull;
+
+    #endregion
 
     private void OnEnable()
     {
@@ -118,7 +123,6 @@ public class PlayerController : NetworkBehaviour
             _playerAnimator.InitializeEvents(_playerManager.playerEvents);
         }
 
-
         _camera = FindFirstObjectByType<Camera>();
         if (_camera == null)
         {
@@ -159,7 +163,7 @@ public class PlayerController : NetworkBehaviour
 
     private void OnInteract()
     {
-        CheckForInteractableCollision();
+        CheckForPickupableAndInteractableCollision();
     }
 
     private void Update()
@@ -318,6 +322,12 @@ public class PlayerController : NetworkBehaviour
         _camera.transform.position = offset + gameObject.transform.position;
     }
 
+    private void CheckForPickupableAndInteractableCollision()
+    {
+        CheckForInteractableCollision();
+        CheckForPickupables();
+    }
+
     private void CheckForInteractableCollision()
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position,
@@ -331,12 +341,39 @@ public class PlayerController : NetworkBehaviour
                     RotatePlayerTowardsTarget(hitCollider);
                     _playerManager.playerEvents.PlayerInteract();
                     chest.Interact();
-
                     break;
                 case Door door:
                     RotatePlayerTowardsTarget(hitCollider);
                     _playerManager.playerEvents.PlayerInteract();
                     door.Interact();
+                    break;
+            }
+        }
+    }
+
+    private void CheckForPickupables()
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position,
+            playerInteractionSettings.interactableRadius,
+            playerInteractionSettings.pickupableLayer);
+        foreach (var hitCollider in hitColliders)
+        {
+            switch (hitCollider.GetComponent<IPickupable>())
+            {
+                case Key key:
+                    if (!isRightHandFull)
+                    {
+                        //Attempt to pick up the key.
+                        key.RequestPickupObject(
+                            new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
+                        isRightHandFull = !isRightHandFull;
+                    }
+                    else
+                    {
+                        key.RequestPutDownObject(transform.position + transform.forward);
+                        isRightHandFull = !isRightHandFull;
+                    }
+
                     break;
             }
         }
