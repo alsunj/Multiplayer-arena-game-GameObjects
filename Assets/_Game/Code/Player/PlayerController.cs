@@ -363,7 +363,6 @@ public class PlayerController : NetworkBehaviour
                 case Key key:
                     if (!isRightHandFull)
                     {
-                        //Attempt to pick up the key.
                         key.RequestPickupObject(
                             new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
                         isRightHandFull = !isRightHandFull;
