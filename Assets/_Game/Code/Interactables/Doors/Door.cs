@@ -17,56 +17,17 @@ public class Door : NetworkBehaviour, IInteractable
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void CmdOpenDoorForEveryoneServerRpc()
-    {
-        RpcOpenDoorForEveryoneClientRpc();
-    }
-
     [ClientRpc]
-    private void RpcOpenDoorForEveryoneClientRpc()
-    {
-        Interacted();
-    }
-
-
-    [ServerRpc(RequireOwnership = false)]
-    private void CmdCloseDoorForEveryoneServerRpc()
-    {
-        RpcCloseDoorForEveryoneClientRpc();
-    }
-
-    [ClientRpc]
-    private void RpcCloseDoorForEveryoneClientRpc()
-    {
-        Interacted();
-    }
-
-
-    private void DoorOpened()
-    {
-        _door.transform.DORotate(
-                new Vector3(0, 90, 0), 1f)
-            .SetEase(Ease.OutBounce);
-        CmdOpenDoorForEveryoneServerRpc();
-    }
-
-    private void DoorOpenedForOtherClients()
+    private void DoorOpenClientRpc()
     {
         _door.transform.DORotate(
                 new Vector3(0, 90, 0), 1f)
             .SetEase(Ease.OutBounce);
     }
 
-    private void DoorClosed()
-    {
-        _door.transform.DORotate(
-                new Vector3(0, 0, 0), 1f)
-            .SetEase(Ease.OutBounce);
-        CmdCloseDoorForEveryoneServerRpc();
-    }
 
-    private void DoorClosedForOtherClients()
+    [ClientRpc]
+    private void DoorCloseClientRpc()
     {
         _door.transform.DORotate(
                 new Vector3(0, 0, 0), 1f)
@@ -83,25 +44,13 @@ public class Door : NetworkBehaviour, IInteractable
     {
         if (!_doorOpened.Value)
         {
-            DoorOpened();
+            DoorOpenClientRpc();
             _doorOpened.Value = true;
         }
         else
         {
-            DoorClosed();
+            DoorCloseClientRpc();
             _doorOpened.Value = false;
-        }
-    }
-
-    public void Interacted()
-    {
-        if (!_doorOpened.Value)
-        {
-            DoorOpenedForOtherClients();
-        }
-        else
-        {
-            DoorClosedForOtherClients();
         }
     }
 }
