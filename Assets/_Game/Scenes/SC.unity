@@ -1020,6 +1020,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
+  keyPrefab: {fileID: 8050255731901760503, guid: 1d9ae894a89fd38449f1ce889f52d1ad, type: 3}
 --- !u!4 &405720569
 Transform:
   m_ObjectHideFlags: 0

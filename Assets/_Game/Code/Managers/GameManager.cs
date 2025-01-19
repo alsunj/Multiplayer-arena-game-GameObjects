@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class GameManager : NetworkBehaviour
 {
+    [SerializeField] private GameObject keyPrefab;
+
     private TextMeshProUGUI _timerText;
     private float _initialTimer = 10f;
     private float _startGameTimer = 10f;
@@ -79,9 +81,15 @@ public class GameManager : NetworkBehaviour
     [ServerRpc]
     private void TimersEndedServerRpc()
     {
-        // Logic to handle when timers have ended
-        Debug.Log("Timers have ended.");
+        for (int i = 0; i < 2; i++)
+        {
+            Vector3 spawnPosition = new Vector3(10 + UnityEngine.Random.Range(-5f, 5f), 0,
+                10 + Random.Range(-5f, 5f));
+            GameObject obj = Instantiate(keyPrefab, spawnPosition, Quaternion.identity);
+            obj.GetComponent<NetworkObject>().Spawn();
+        }
     }
+
 
     [ServerRpc(RequireOwnership = false)]
     public void RequestTimerStateServerRpc(ServerRpcParams rpcParams = default)
