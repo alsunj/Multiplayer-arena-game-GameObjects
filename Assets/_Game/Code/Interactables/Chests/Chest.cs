@@ -22,11 +22,8 @@ public class Chest : NetworkBehaviour, IInteractable
     [ServerRpc(RequireOwnership = false)]
     private void ChestFoundServerRpc()
     {
-        if (!_chestFound.Value)
-        {
-            ChestFoundClientRpc();
-            _chestFound.Value = true;
-        }
+        ChestFoundClientRpc();
+        _chestFound.Value = true;
     }
 
     [ClientRpc]
@@ -38,8 +35,14 @@ public class Chest : NetworkBehaviour, IInteractable
     }
 
 
-    public void Interact()
+    public bool Interact()
     {
+        if (_chestFound.Value)
+        {
+            return false;
+        }
+
         ChestFoundServerRpc();
+        return true;
     }
 }

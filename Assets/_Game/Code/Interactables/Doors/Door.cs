@@ -34,9 +34,10 @@ public class Door : NetworkBehaviour, IInteractable
             .SetEase(Ease.OutBounce);
     }
 
-    public void Interact()
+    public bool Interact()
     {
         RequestOpenDoorServerRpc();
+        return true;
     }
 
     [ServerRpc(RequireOwnership = false)]
