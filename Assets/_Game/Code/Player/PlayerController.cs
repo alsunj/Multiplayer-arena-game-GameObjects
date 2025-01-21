@@ -10,6 +10,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private PlayerInteractionSettings playerInteractionSettings;
     [SerializeField] private float speed = 2f;
     [SerializeField] private InputReader inputReader;
+
+    private PlayerPlacements _playerPlacements;
     private PlayerManager _playerManager;
     private PlayerAnimator _playerAnimator;
     private Rigidbody _rb;
@@ -140,6 +142,16 @@ public class PlayerController : NetworkBehaviour
         {
             Debug.LogError("Rigidbody is null");
         }
+        else
+        {
+            _rb.isKinematic = false;
+        }
+
+        _playerPlacements = GetComponent<PlayerPlacements>();
+        if (_playerPlacements == null)
+        {
+            Debug.LogError("PlayerPlacements is null");
+        }
     }
 
     private void OnSprint(bool state)
@@ -155,9 +167,7 @@ public class PlayerController : NetworkBehaviour
     private void OnAttack()
     {
         if (_attackCooldownTimer > 0) return;
-
-        Debug.Log("attack started");
-        HitObject();
+        CheckForWeapons();
         _attackCooldownTimer = attackCooldown; // Set cooldown duration
     }
 
@@ -324,97 +334,113 @@ public class PlayerController : NetworkBehaviour
 
     private void CheckForPickupableAndInteractableCollision()
     {
-        CheckForInteractableCollision();
+        if (CheckForInteractableCollision()) return;
         CheckForPickupables();
     }
 
-    private void CheckForInteractableCollision()
+
+    private bool CheckForInteractableCollision()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position,
+        Collider closestCollider = FindClosestCollider(transform.position,
             playerInteractionSettings.interactableRadius,
             playerInteractionSettings.interactableLayer);
-        foreach (var hitCollider in hitColliders)
+
+        if (closestCollider != null)
         {
-            switch (hitCollider.GetComponent<IInteractable>())
+            var interactable = closestCollider.GetComponent<IInteractable>();
+            if (interactable != null)
             {
-                case Chest chest:
-                    RotatePlayerTowardsTarget(hitCollider);
+                RotatePlayerTowardsTarget(closestCollider);
+                if (interactable.Interact())
+                {
                     _playerManager.playerEvents.PlayerInteract();
-                    chest.Interact();
-                    break;
-                case Door door:
-                    RotatePlayerTowardsTarget(hitCollider);
-                    _playerManager.playerEvents.PlayerInteract();
-                    door.Interact();
-                    break;
+                    return true;
+                }
             }
         }
+
+        return false;
     }
 
     private void CheckForPickupables()
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position,
+        Collider closestCollider = FindClosestCollider(transform.position,
             playerInteractionSettings.interactableRadius,
             playerInteractionSettings.pickupableLayer);
-        foreach (var hitCollider in hitColliders)
+
+        if (closestCollider != null)
         {
-            switch (hitCollider.GetComponent<IPickupable>())
+            switch (closestCollider.GetComponent<Pickupable>())
             {
                 case Key key:
-                    if (!isRightHandFull)
-                    {
-                        key.RequestPickupObject(
-                            new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
-                        isRightHandFull = !isRightHandFull;
-                    }
-                    else
-                    {
-                        key.RequestPutDownObject(transform.position + transform.forward);
-                        isRightHandFull = !isRightHandFull;
-                    }
-
+                    PickupObject(key);
+                    break;
+                case Explosive explosive:
+                    PickupObject(explosive);
                     break;
             }
         }
     }
 
-    private void HitObject()
+    private void PickupObject(Pickupable pickupable)
     {
-        Collider[] hitColliders = Physics.OverlapSphere(transform.position,
+        if (!_playerPlacements.IsRightHandFull())
+        {
+            pickupable.RequestPickupObject(
+                new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
+        }
+        else
+        {
+            pickupable.RequestPutDownObject(
+                new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
+        }
+    }
+
+    private void CheckForWeapons()
+    {
+        HitObject(hitDamage);
+    }
+
+    private void HitObject(float weaponHitDamage)
+    {
+        Collider closestCollider = FindClosestCollider(transform.position,
             playerInteractionSettings.interactableRadius,
             playerInteractionSettings.destructableLayer);
 
-        if (hitColliders.Length > 0)
+        if (closestCollider != null)
         {
-            Collider closestCollider = null;
-            float closestDistance = float.MaxValue;
-
-            foreach (var hitCollider in hitColliders)
+            switch (closestCollider.GetComponent<IDestrucable>())
             {
-                float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
-                if (distance < closestDistance)
-                {
-                    closestDistance = distance;
-                    closestCollider = hitCollider;
-                }
-            }
-
-            if (closestCollider != null)
-            {
-                switch (closestCollider.GetComponent<IDestrucable>())
-                {
-                    case Barrel barrel:
-                        RotatePlayerTowardsTarget(closestCollider);
-                        _playerManager.playerEvents.PlayerAttack();
-                        barrel.TakeDamage(hitDamage);
-                        break;
-                }
+                case Barrel barrel:
+                    RotatePlayerTowardsTarget(closestCollider);
+                    _playerManager.playerEvents.PlayerAttack();
+                    barrel.TakeDamage(weaponHitDamage);
+                    break;
             }
         }
         else
         {
             _playerManager.playerEvents.PlayerAttack();
         }
+    }
+
+    private Collider FindClosestCollider(Vector3 position, float radius, LayerMask layerMask)
+    {
+        Collider[] hitColliders = Physics.OverlapSphere(position, radius, layerMask);
+        Collider closestCollider = null;
+        float closestDistance = float.MaxValue;
+
+        foreach (var hitCollider in hitColliders)
+        {
+            float distance = Vector3.Distance(position, hitCollider.transform.position);
+            if (distance < closestDistance)
+            {
+                closestDistance = distance;
+                closestCollider = hitCollider;
+            }
+        }
+
+        return closestCollider;
     }
 
     private void RotatePlayerTowardsTarget(Collider hit)
