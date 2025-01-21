@@ -17,12 +17,12 @@ public class Explosive : Pickupable, IExplosive
         throw new System.NotImplementedException();
     }
 
-    public override void Pickup(GameObject pickupingTarget)
+    public override void Pickup()
     {
         _boxCollider.isTrigger = true;
     }
 
-    public override void PutDown(Vector3 position)
+    public override void PutDown()
     {
         _boxCollider.isTrigger = false;
         //  transform.position = position;

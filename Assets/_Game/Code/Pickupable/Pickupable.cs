@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>
+public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>, IPickupable
 {
     private NetworkVariable<bool> isObjectPickedup = new NetworkVariable<bool>();
     private FollowTransform _followTransform;
@@ -15,28 +15,45 @@ public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>
         {
             Debug.LogError("FollowTransform component not found on the GameObject.");
         }
+
+        _startingRotation = transform.rotation;
     }
 
-    public void RequestPutDownObject(Vector3 position)
+    public void RequestPutDownObject(NetworkObjectReference pickupingTarget)
     {
-        RequestPutDownObjectServerRpc(position);
+        RequestPutDownObjectServerRpc(pickupingTarget);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void RequestPutDownObjectServerRpc(Vector3 position)
+    private void RequestPutDownObjectServerRpc(NetworkObjectReference pickupingTarget)
     {
         if (isObjectPickedup.Value)
         {
             isObjectPickedup.Value = false;
-            _followTransform.SetTargetTransform(null);
-            PutDownObjectClientRpc(position);
+            Vector3 newPosition = Vector3.zero;
+            if (pickupingTarget.TryGet(out NetworkObject target))
+            {
+                newPosition = target.transform.position + target.transform.forward;
+                PlayerPlacements playerPlacements = target.GetComponent<PlayerPlacements>();
+                if (playerPlacements != null)
+                {
+                    playerPlacements.ClearPlayerRightHandItem();
+                }
+            }
+
+            // Notify all clients to update their visuals
+            PutDownObjectClientRpc(newPosition);
         }
     }
 
     [ClientRpc]
-    private void PutDownObjectClientRpc(Vector3 position)
+    private void PutDownObjectClientRpc(Vector3 newPosition)
     {
-        PutDown(position);
+        _followTransform.SetTargetTransform(null);
+        transform.position = newPosition;
+        transform.rotation = _startingRotation;
+        // Update the visuals on the client
+        PutDown();
     }
 
     public void RequestPickupObject(NetworkObjectReference pickupingTarget)
@@ -56,11 +73,12 @@ public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>
                 PlayerPlacements playerPlacements = target.GetComponent<PlayerPlacements>();
                 if (playerPlacements != null)
                 {
-                    playerPlacements.SetPlayerRightHandItemServerRpc(new NetworkObjectReference(this.NetworkObject));
+                    playerPlacements.SetPlayerRightHandItem(new NetworkObjectReference(this.NetworkObject));
                     _followTransform.SetTargetTransform(playerPlacements.playerRightHand.transform);
                 }
             }
 
+            // Notify all clients to update their visuals
             PickupObjectClientRpc(pickupingTarget);
         }
     }
@@ -70,13 +88,19 @@ public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>
     {
         if (pickupingTarget.TryGet(out NetworkObject target))
         {
-            Pickup(target.gameObject);
+            PlayerPlacements playerPlacements = target.GetComponent<PlayerPlacements>();
+            if (playerPlacements != null)
+            {
+                _followTransform.SetTargetTransform(playerPlacements.playerRightHand.transform);
+            }
         }
+
+        Pickup();
     }
 
-    public abstract void PutDown(Vector3 position);
+    public abstract void PutDown();
 
-    public abstract void Pickup(GameObject pickupingTarget);
+    public abstract void Pickup();
 
     public bool Equals(Pickupable other)
     {

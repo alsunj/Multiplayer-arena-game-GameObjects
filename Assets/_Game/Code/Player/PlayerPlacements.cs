@@ -9,6 +9,7 @@ public class PlayerPlacements : NetworkBehaviour
     private NetworkVariable<NetworkObjectReference> playerRightHandItem = new NetworkVariable<NetworkObjectReference>();
     private NetworkVariable<NetworkObjectReference> playerLeftHandItem = new NetworkVariable<NetworkObjectReference>();
 
+
     void Start()
     {
         playerRightHand = transform.Find("PlayerVisual/Skeleton_Minion/Rig/root/handIK.r/EquippedItemR")?.gameObject;
@@ -24,8 +25,13 @@ public class PlayerPlacements : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
-    public void SetPlayerRightHandItemServerRpc(NetworkObjectReference newItem)
+    public void SetPlayerRightHandItem(NetworkObjectReference newItem)
+    {
+        SetPlayerRightHandItemServerRpc(newItem);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerRightHandItemServerRpc(NetworkObjectReference newItem)
     {
         if (newItem.TryGet(out NetworkObject networkObject))
         {
@@ -33,21 +39,30 @@ public class PlayerPlacements : NetworkBehaviour
             if (pickupable != null)
             {
                 playerRightHandItem.Value = newItem;
-                UpdatePlayerRightHandItemClientRpc(newItem);
+                // UpdatePlayerRightHandItemClientRpc(newItem);
             }
         }
     }
 
-    [ClientRpc]
-    private void UpdatePlayerRightHandItemClientRpc(NetworkObjectReference newItem)
+    public void ClearPlayerRightHandItem()
     {
-        if (newItem.TryGet(out NetworkObject networkObject))
+        ClearPlayerRightHandItemServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ClearPlayerRightHandItemServerRpc()
+    {
+        playerRightHandItem.Value = new NetworkObjectReference();
+        // UpdatePlayerRightHandItemClientRpc(playerRightHandItem.Value);
+    }
+
+    public bool IsRightHandFull()
+    {
+        if (playerRightHandItem.Value.TryGet(out NetworkObject networkObject))
         {
-            Pickupable pickupable = networkObject.GetComponent<Pickupable>();
-            if (pickupable != null)
-            {
-                playerRightHandItem.Value = newItem;
-            }
+            return networkObject.GetComponent<Pickupable>() != null;
         }
+
+        return false;
     }
 }

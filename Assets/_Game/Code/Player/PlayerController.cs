@@ -146,6 +146,12 @@ public class PlayerController : NetworkBehaviour
         {
             _rb.isKinematic = false;
         }
+
+        _playerPlacements = GetComponent<PlayerPlacements>();
+        if (_playerPlacements == null)
+        {
+            Debug.LogError("PlayerPlacements is null");
+        }
     }
 
     private void OnSprint(bool state)
@@ -377,9 +383,17 @@ public class PlayerController : NetworkBehaviour
     private void PickupObject(Pickupable pickupable)
     {
         // if (!isRightHandFull)
-        // {
-        pickupable.RequestPickupObject(
-            new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
+        if (!_playerPlacements.IsRightHandFull())
+        {
+            pickupable.RequestPickupObject(
+                new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
+        }
+        else
+        {
+            pickupable.RequestPutDownObject(
+                new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
+        }
+
 
         //TODO: boolean should be set to true only if the object was picked up
         //     isRightHandFull = !isRightHandFull;
