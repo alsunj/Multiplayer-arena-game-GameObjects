@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1667863745995374288}
+  - component: {fileID: 3668773499323874180}
   - component: {fileID: 3196686290097198713}
   - component: {fileID: 5155192956440818289}
   - component: {fileID: 9087763765203173466}
-  - component: {fileID: 3668773499323874180}
   m_Layer: 8
   m_Name: Key
   m_TagString: Untagged
@@ -36,6 +36,31 @@ Transform:
   - {fileID: 7749746802626306604}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &3668773499323874180
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8050255731901760503}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 2284586459
+  InScenePlacedSourceGlobalObjectIdHash: 2284586459
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &3196686290097198713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,32 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 357ddf00dbde76441827eb57fd190bf8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _followTransformSettings: {fileID: 11400000, guid: 5f3f18b211ea1704fbb884929d9cf33d, type: 2}
---- !u!114 &3668773499323874180
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8050255731901760503}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2868596387
-  InScenePlacedSourceGlobalObjectIdHash: 2284586459
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
+  followTransformSettings: {fileID: 11400000, guid: 5f3f18b211ea1704fbb884929d9cf33d, type: 2}
 --- !u!1001 &7783936310330246599
 PrefabInstance:
   m_ObjectHideFlags: 0

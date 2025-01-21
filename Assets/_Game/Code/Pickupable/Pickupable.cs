@@ -1,10 +1,21 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public abstract class Pickupable : NetworkBehaviour
+public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>
 {
     private NetworkVariable<bool> isObjectPickedup = new NetworkVariable<bool>();
+    private FollowTransform _followTransform;
+    private Quaternion _startingRotation;
 
+    private void Start()
+    {
+        _followTransform = GetComponent<FollowTransform>();
+        if (_followTransform == null)
+        {
+            Debug.LogError("FollowTransform component not found on the GameObject.");
+        }
+    }
 
     public void RequestPutDownObject(Vector3 position)
     {
@@ -17,6 +28,7 @@ public abstract class Pickupable : NetworkBehaviour
         if (isObjectPickedup.Value)
         {
             isObjectPickedup.Value = false;
+            _followTransform.SetTargetTransform(null);
             PutDownObjectClientRpc(position);
         }
     }
@@ -38,6 +50,17 @@ public abstract class Pickupable : NetworkBehaviour
         if (!isObjectPickedup.Value)
         {
             isObjectPickedup.Value = true;
+
+            if (pickupingTarget.TryGet(out NetworkObject target))
+            {
+                PlayerPlacements playerPlacements = target.GetComponent<PlayerPlacements>();
+                if (playerPlacements != null)
+                {
+                    playerPlacements.SetPlayerRightHandItemServerRpc(new NetworkObjectReference(this.NetworkObject));
+                    _followTransform.SetTargetTransform(playerPlacements.playerRightHand.transform);
+                }
+            }
+
             PickupObjectClientRpc(pickupingTarget);
         }
     }
@@ -53,8 +76,26 @@ public abstract class Pickupable : NetworkBehaviour
 
     public abstract void PutDown(Vector3 position);
 
-
     public abstract void Pickup(GameObject pickupingTarget);
 
-    
+    public bool Equals(Pickupable other)
+    {
+        if (other == null) return false;
+        return NetworkObjectId == other.NetworkObjectId;
+    }
+
+    public override bool Equals(object obj)
+    {
+        if (obj is Pickupable other)
+        {
+            return Equals(other);
+        }
+
+        return false;
+    }
+
+    public override int GetHashCode()
+    {
+        return NetworkObjectId.GetHashCode();
+    }
 }

@@ -1,10 +1,9 @@
-using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Key : Pickupable, IPickupable
+public class Explosive : Pickupable, IExplosive
 {
-    // private Quaternion _startingRotation;
+    private ExplosiveSettings _explosiveSettings;
     private BoxCollider _boxCollider;
 
     private void Awake()
@@ -13,16 +12,19 @@ public class Key : Pickupable, IPickupable
     }
 
 
+    public void Explode()
+    {
+        throw new System.NotImplementedException();
+    }
+
     public override void Pickup(GameObject pickupingTarget)
     {
         _boxCollider.isTrigger = true;
     }
 
-
     public override void PutDown(Vector3 position)
     {
         _boxCollider.isTrigger = false;
-        // transform.position = position;
-        // transform.rotation = _startingRotation;
+        //  transform.position = position;
     }
 }

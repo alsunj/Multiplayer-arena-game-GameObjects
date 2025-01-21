@@ -9,8 +9,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab7df33a53f46df4e9ecdcf785116f66, type: 3}
-  m_Name: KeyTransformSettings
+  m_Script: {fileID: 11500000, guid: 66230a11c233a404da90c824e752674d, type: 3}
+  m_Name: ExplosiveSettings
   m_EditorClassIdentifier: 
-  targetRotationOffset: {x: 180, y: 180, z: 0}
-  targetPositionOffset: {x: 0, y: 0, z: 0}

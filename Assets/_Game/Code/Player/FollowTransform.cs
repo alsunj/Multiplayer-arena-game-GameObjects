@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class FollowTransform : MonoBehaviour
 {
     private Transform targetTransform;
 
-    [SerializeField] private FollowTransformSettings _followTransformSettings;
+    [SerializeField] private FollowTransformSettings followTransformSettings;
 
     public void SetTargetTransform(Transform targetTransform)
     {
@@ -19,8 +20,8 @@ public class FollowTransform : MonoBehaviour
             return;
         }
 
-        transform.position = targetTransform.position;
-        Vector3 targetEulerAngles = targetTransform.rotation.eulerAngles + _followTransformSettings.keyRotation;
+        transform.position = targetTransform.position + followTransformSettings.targetPositionOffset;
+        Vector3 targetEulerAngles = targetTransform.rotation.eulerAngles + followTransformSettings.targetRotationOffset;
         transform.rotation = Quaternion.Euler(targetEulerAngles);
     }
 }

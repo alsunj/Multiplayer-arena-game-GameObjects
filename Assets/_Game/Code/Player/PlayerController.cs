@@ -10,6 +10,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private PlayerInteractionSettings playerInteractionSettings;
     [SerializeField] private float speed = 2f;
     [SerializeField] private InputReader inputReader;
+
+    private PlayerPlacements _playerPlacements;
     private PlayerManager _playerManager;
     private PlayerAnimator _playerAnimator;
     private Rigidbody _rb;
@@ -140,6 +142,10 @@ public class PlayerController : NetworkBehaviour
         {
             Debug.LogError("Rigidbody is null");
         }
+        else
+        {
+            _rb.isKinematic = false;
+        }
     }
 
     private void OnSprint(bool state)
@@ -155,9 +161,7 @@ public class PlayerController : NetworkBehaviour
     private void OnAttack()
     {
         if (_attackCooldownTimer > 0) return;
-
-        Debug.Log("attack started");
-        HitObject();
+        CheckForWeapons();
         _attackCooldownTimer = attackCooldown; // Set cooldown duration
     }
 
@@ -358,27 +362,41 @@ public class PlayerController : NetworkBehaviour
             playerInteractionSettings.pickupableLayer);
         foreach (var hitCollider in hitColliders)
         {
-            switch (hitCollider.GetComponent<IPickupable>())
+            switch (hitCollider.GetComponent<Pickupable>())
             {
                 case Key key:
-                    if (!isRightHandFull)
-                    {
-                        key.RequestPickupObject(
-                            new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
-                        isRightHandFull = !isRightHandFull;
-                    }
-                    else
-                    {
-                        key.RequestPutDownObject(transform.position + transform.forward);
-                        isRightHandFull = !isRightHandFull;
-                    }
-
+                    PickupObject(key);
+                    break;
+                case Explosive explosive:
+                    PickupObject(explosive);
                     break;
             }
         }
     }
 
-    private void HitObject()
+    private void PickupObject(Pickupable pickupable)
+    {
+        // if (!isRightHandFull)
+        // {
+        pickupable.RequestPickupObject(
+            new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
+
+        //TODO: boolean should be set to true only if the object was picked up
+        //     isRightHandFull = !isRightHandFull;
+        // }
+        // else
+        // {
+        //     pickupable.RequestPutDownObject(transform.position + transform.forward);
+        //     isRightHandFull = !isRightHandFull;
+        // }
+    }
+
+    private void CheckForWeapons()
+    {
+        HitObject(hitDamage);
+    }
+
+    private void HitObject(float weaponHitDamage)
     {
         Collider[] hitColliders = Physics.OverlapSphere(transform.position,
             playerInteractionSettings.interactableRadius,
@@ -406,7 +424,7 @@ public class PlayerController : NetworkBehaviour
                     case Barrel barrel:
                         RotatePlayerTowardsTarget(closestCollider);
                         _playerManager.playerEvents.PlayerAttack();
-                        barrel.TakeDamage(hitDamage);
+                        barrel.TakeDamage(weaponHitDamage);
                         break;
                 }
             }
