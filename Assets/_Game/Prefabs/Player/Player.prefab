@@ -230,7 +230,6 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   playerInteractionSettings: {fileID: 11400000, guid: 1bc75bcaab451a44d8a71f0189dc90f8, type: 2}
   speed: 2
-  inputReader: {fileID: 11400000, guid: fae963ae99ce6d14d8bbcd54becb58d7, type: 2}
   offset: {x: 0, y: 7.4, z: -6.4}
   enableSprint: 1
   unlimitedSprint: 0
@@ -334,6 +333,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c5e28a848c1e15846a459b682cc64164, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inputReader: {fileID: 11400000, guid: fae963ae99ce6d14d8bbcd54becb58d7, type: 2}
 --- !u!114 &911307299827299822
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -359,6 +359,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dee285952d3d7f43936f433ec54e262, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  playerRightHand: {fileID: 0}
+  playerLeftHand: {fileID: 0}
 --- !u!1 &8839871738369281743
 GameObject:
   m_ObjectHideFlags: 0

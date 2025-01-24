@@ -6,7 +6,6 @@ public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>, IPi
 {
     private NetworkVariable<bool> isObjectPickedup = new NetworkVariable<bool>();
     private FollowTransform _followTransform;
-    private Quaternion _startingRotation;
 
     private void Start()
     {
@@ -15,8 +14,6 @@ public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>, IPi
         {
             Debug.LogError("FollowTransform component not found on the GameObject.");
         }
-
-        _startingRotation = transform.rotation;
     }
 
     public void RequestPutDownObject(NetworkObjectReference pickupingTarget)
@@ -30,10 +27,10 @@ public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>, IPi
         if (isObjectPickedup.Value)
         {
             isObjectPickedup.Value = false;
-            Vector3 newPosition = Vector3.zero;
+            Vector3 putDownPosition = Vector3.zero;
             if (pickupingTarget.TryGet(out NetworkObject target))
             {
-                newPosition = target.transform.position + target.transform.forward;
+                putDownPosition = target.transform.position + target.transform.forward;
                 PlayerPlacements playerPlacements = target.GetComponent<PlayerPlacements>();
                 if (playerPlacements != null)
                 {
@@ -42,23 +39,27 @@ public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>, IPi
             }
 
             // Notify all clients to update their visuals
-            PutDownObjectClientRpc(newPosition);
+            PutDownObjectClientRpc(putDownPosition);
         }
     }
 
     [ClientRpc]
-    private void PutDownObjectClientRpc(Vector3 newPosition)
+    private void PutDownObjectClientRpc(Vector3 putDownPosition)
     {
-        _followTransform.SetTargetTransform(null);
-        transform.position = newPosition;
-        transform.rotation = _startingRotation;
-        // Update the visuals on the client
+        _followTransform.RemoveTargetTransform(putDownPosition);
+        //do not null it _followTransform.SetTargetPlayerControls(null);
         PutDown();
     }
 
-    public void RequestPickupObject(NetworkObjectReference pickupingTarget)
+    public bool RequestPickupObject(NetworkObjectReference pickupingTarget)
     {
+        if (isObjectPickedup.Value)
+        {
+            return false;
+        }
+
         RequestPickupObjectServerRpc(pickupingTarget);
+        return true;
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -74,7 +75,30 @@ public abstract class Pickupable : NetworkBehaviour, IEquatable<Pickupable>, IPi
                 if (playerPlacements != null)
                 {
                     playerPlacements.SetPlayerRightHandItem(new NetworkObjectReference(this.NetworkObject));
-                    _followTransform.SetTargetTransform(playerPlacements.playerRightHand.transform);
+                    //_followTransform.SetTargetTransform(playerPlacements.playerRightHand.transform);
+                }
+                else
+                {
+                    Debug.LogError("Cannot assign the object to the player's hand.");
+                }
+
+                PlayerManager switchPlayerMap = target.GetComponent<PlayerManager>();
+                if (switchPlayerMap != null)
+                {
+                    ISwitchPlayerMap switchPlayerMapInterface = switchPlayerMap.inputReader;
+                    if (switchPlayerMapInterface != null)
+                    {
+                        _followTransform.SetTargetPlayerControls(switchPlayerMapInterface);
+                    }
+                    else
+                    {
+                        Debug.LogError("Cannot get ISwitchPlayerMap from inputReader.");
+                    }
+                }
+                else
+                {
+                    Debug.LogError("target is" + target.name);
+                    Debug.LogError("Cannot get target player controls map");
                 }
             }
 

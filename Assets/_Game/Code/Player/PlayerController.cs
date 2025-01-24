@@ -9,8 +9,6 @@ public class PlayerController : NetworkBehaviour
 
     [SerializeField] private PlayerInteractionSettings playerInteractionSettings;
     [SerializeField] private float speed = 2f;
-    [SerializeField] private InputReader inputReader;
-
     private PlayerPlacements _playerPlacements;
     private PlayerManager _playerManager;
     private PlayerAnimator _playerAnimator;
@@ -78,40 +76,37 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
-    private void OnEnable()
+    private void OnDisable()
     {
-        if (inputReader != null)
+        if (_playerManager.inputReader != null)
         {
-            inputReader.MoveEvent += OnMove;
-            inputReader.InteractEvent += OnInteract;
-            inputReader.SprintEvent += OnSprint;
-            inputReader.AttackEvent += OnAttack;
+            _playerManager.inputReader.MoveEvent -= OnMove;
+            _playerManager.inputReader.InteractEvent -= OnInteract;
+            _playerManager.inputReader.SprintEvent -= OnSprint;
+            _playerManager.inputReader.AttackEvent -= OnAttack;
         }
     }
 
-    private void OnDisable()
+    private void InitializeMovements()
     {
-        if (inputReader != null)
-        {
-            inputReader.MoveEvent -= OnMove;
-            inputReader.InteractEvent -= OnInteract;
-            inputReader.SprintEvent -= OnSprint;
-            inputReader.AttackEvent -= OnAttack;
-        }
+        _playerManager.inputReader.MoveEvent += OnMove;
+        _playerManager.inputReader.InteractEvent += OnInteract;
+        _playerManager.inputReader.SprintEvent += OnSprint;
+        _playerManager.inputReader.AttackEvent += OnAttack;
     }
 
     private void Start()
     {
         _sprintRemaining = sprintDuration;
         _playerManager = GetComponent<PlayerManager>();
-
-        if (_playerManager == null)
+        if (_playerManager.inputReader != null)
         {
-            Debug.LogError("PlayerManager is null");
+            _playerManager.Initialize();
+            InitializeMovements();
         }
         else
         {
-            _playerManager.Initialize();
+            Debug.LogError("InputReader is null");
         }
 
         _playerAnimator = GetComponentInChildren<PlayerAnimator>();
@@ -136,7 +131,8 @@ public class PlayerController : NetworkBehaviour
         }
 
 
-        inputReader.InitializeInput();
+        //_playerManager.inputReader.InitializeInput();
+
         _rb = GetComponent<Rigidbody>();
         if (_rb == null)
         {
@@ -351,11 +347,7 @@ public class PlayerController : NetworkBehaviour
             if (interactable != null)
             {
                 RotatePlayerTowardsTarget(closestCollider);
-                if (interactable.Interact())
-                {
-                    _playerManager.playerEvents.PlayerInteract();
-                    return true;
-                }
+                PlayPlayerInteract(interactable.Interact());
             }
         }
 
@@ -373,26 +365,39 @@ public class PlayerController : NetworkBehaviour
             switch (closestCollider.GetComponent<Pickupable>())
             {
                 case Key key:
-                    PickupObject(key);
+                    RotatePlayerTowardsTarget(closestCollider);
+                    PlayPlayerInteract(PickupObject(key));
                     break;
                 case Explosive explosive:
-                    PickupObject(explosive);
+                    RotatePlayerTowardsTarget(closestCollider);
+                    PlayPlayerInteract(PickupObject(explosive));
                     break;
             }
         }
     }
 
-    private void PickupObject(Pickupable pickupable)
+    private void PlayPlayerInteract(bool state)
     {
+        if (state)
+        {
+            _playerManager.playerEvents.PlayerInteract();
+        }
+    }
+
+    private bool PickupObject(Pickupable pickupable)
+    {
+        //you can always put down the pickupable, but you can only pick it up
+        //if your right hand is empty and it's not held by anyone else.
         if (!_playerPlacements.IsRightHandFull())
         {
-            pickupable.RequestPickupObject(
+            return pickupable.RequestPickupObject(
                 new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
         }
         else
         {
             pickupable.RequestPutDownObject(
                 new NetworkObjectReference(gameObject.GetComponent<NetworkObject>()));
+            return true;
         }
     }
 
