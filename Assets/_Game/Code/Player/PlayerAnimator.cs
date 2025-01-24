@@ -61,7 +61,7 @@ public class PlayerAnimator : NetworkBehaviour
 
     private void SetPlayerInteract()
     {
-        _animator.SetTrigger(IS_INTERACTING);
+        _animator.CrossFade(IS_INTERACTING, 0.1f, -1, 0, 1f);
     }
 
     private void SetPlayerAttack()

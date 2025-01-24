@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [CreateAssetMenu(fileName = "InputReader", menuName = "Scriptable Objects/InputReader")]
-public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions, IInputHandler
+public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions, IInputHandler, ISwitchPlayerMap
 {
     private InputSystem_Actions inputActions;
     public event Action<Vector2> MoveEvent;
@@ -120,5 +120,15 @@ public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions,
     public void SimulateSprint(bool isSprinting)
     {
         throw new NotImplementedException();
+    }
+
+    public void TurnOffPlayerControls()
+    {
+        inputActions.Player.Disable();
+    }
+
+    public void TurnOnPlayerControls()
+    {
+        inputActions.Player.Enable();
     }
 }
