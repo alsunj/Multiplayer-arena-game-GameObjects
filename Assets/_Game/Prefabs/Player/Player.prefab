@@ -139,7 +139,7 @@ GameObject:
   - component: {fileID: 6323309021802201727}
   - component: {fileID: 911307299827299822}
   - component: {fileID: -7974492635611840169}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -202,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 3775582031
+  GlobalObjectIdHash: 425717663
   InScenePlacedSourceGlobalObjectIdHash: 425717663
   DeferredDespawnTick: 0
   Ownership: 1

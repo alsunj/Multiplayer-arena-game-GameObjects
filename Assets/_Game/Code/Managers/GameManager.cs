@@ -25,8 +25,10 @@ public class GameManager : NetworkBehaviour
 
         if (IsServer)
         {
-            _initialTimerActive = startGame;
+            // _initialTimerActive = startGame;
         }
+
+        _initialTimerActive = startGame;
     }
 
     private void Update()
