@@ -6,12 +6,13 @@ using UnityEngine;
 public class GameManager : NetworkBehaviour
 {
     [SerializeField] private GameObject keyPrefab;
-
+    [SerializeField] private bool startGame;
     private TextMeshProUGUI _timerText;
     private float _initialTimer = 10f;
     private float _startGameTimer = 10f;
     private bool _initialTimerActive = true;
     private bool _startGameTimerActive;
+
 
     private void Start()
     {
@@ -24,7 +25,7 @@ public class GameManager : NetworkBehaviour
 
         if (IsServer)
         {
-            _initialTimerActive = true;
+            _initialTimerActive = startGame;
         }
     }
 

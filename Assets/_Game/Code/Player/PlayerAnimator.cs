@@ -8,6 +8,8 @@ public class PlayerAnimator : NetworkBehaviour
     private const string IS_RUNNING = "IsRunning";
     private const string IS_INTERACTING = "Interact";
     private const string IS_ATTACKING = "Attack";
+    private const string IS_DEFENDING = "IsDefending";
+
 
     private PlayerEvents _playerEvents;
     private Animator _animator;
@@ -26,6 +28,7 @@ public class PlayerAnimator : NetworkBehaviour
             _playerEvents.onPlayerRun -= SetPlayerRunBool;
             _playerEvents.onPlayerInteract -= SetPlayerInteract;
             _playerEvents.onPlayerAttack -= SetPlayerAttack;
+            _playerEvents.onPlayerDefence -= SetPlayerDefence;
         }
     }
 
@@ -38,6 +41,7 @@ public class PlayerAnimator : NetworkBehaviour
             _playerEvents.onPlayerRun += SetPlayerRunBool;
             _playerEvents.onPlayerInteract += SetPlayerInteract;
             _playerEvents.onPlayerAttack += SetPlayerAttack;
+            _playerEvents.onPlayerDefence += SetPlayerDefence;
         }
     }
 
@@ -49,14 +53,14 @@ public class PlayerAnimator : NetworkBehaviour
         }
     }
 
-    private void SetPlayerRunBool(bool obj)
+    private void SetPlayerRunBool(bool state)
     {
-        _animator.SetBool(IS_RUNNING, obj);
+        _animator.SetBool(IS_RUNNING, state);
     }
 
-    private void SetPlayerWalkBool(bool obj)
+    private void SetPlayerWalkBool(bool state)
     {
-        _animator.SetBool(IS_WALKING, obj);
+        _animator.SetBool(IS_WALKING, state);
     }
 
     private void SetPlayerInteract()
@@ -67,5 +71,14 @@ public class PlayerAnimator : NetworkBehaviour
     private void SetPlayerAttack()
     {
         _animator.CrossFade(IS_ATTACKING, 0.1f, -1, 0, 1f);
+    }
+
+    private void SetPlayerDefence(bool state)
+    {
+        _animator.SetBool(IS_DEFENDING, state);
+        if (state)
+        {
+            _animator.CrossFade(IS_DEFENDING, 0.1f, -1, 0, 1f);
+        }
     }
 }

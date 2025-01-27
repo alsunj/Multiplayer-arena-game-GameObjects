@@ -4,10 +4,18 @@ public class PlayerEvents
 {
     public event Action<bool> onPlayerWalk;
     public event Action<bool> onPlayerRun;
+    public event Action<bool> onPlayerDefence;
     public event Action onPlayerInteract;
-
     public event Action onPlayerAttack;
 
+
+    public void PlayerDefence(bool state)
+    {
+        if (onPlayerDefence != null)
+        {
+            onPlayerDefence(state);
+        }
+    }
 
     public void PlayerWalk(bool state)
     {
