@@ -10,9 +10,12 @@ public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions,
     public event Action<Vector2> LookEvent;
     public event Action InteractEvent;
     public event Action JumpEvent;
+    public event Action AttackEvent;
     public event Action<bool> SprintEvent;
     public event Action<bool> CrouchEvent;
-    public event Action AttackEvent;
+
+    public event Action<bool> DefenceEvent;
+
 
     public void InitializeInput()
     {
@@ -64,6 +67,18 @@ public class InputReader : ScriptableObject, InputSystem_Actions.IPlayerActions,
         if (context.performed)
         {
             AttackEvent?.Invoke();
+        }
+    }
+
+    public void OnDefence(InputAction.CallbackContext context)
+    {
+        if (context.performed)
+        {
+            DefenceEvent?.Invoke(true);
+        }
+        else if (context.canceled)
+        {
+            DefenceEvent?.Invoke(false);
         }
     }
 

@@ -62,6 +62,13 @@ public class PlayerController : NetworkBehaviour
 
     #endregion
 
+    #region defenceProperties
+
+    public float defenceCooldown = 0.5f;
+    private float _defenceCooldownTimer;
+
+    #endregion
+
     #region attackProperties
 
     public float hitDamage = 5f;
@@ -84,6 +91,7 @@ public class PlayerController : NetworkBehaviour
             _playerManager.inputReader.InteractEvent -= OnInteract;
             _playerManager.inputReader.SprintEvent -= OnSprint;
             _playerManager.inputReader.AttackEvent -= OnAttack;
+            _playerManager.inputReader.DefenceEvent -= OnDefence;
         }
     }
 
@@ -93,6 +101,7 @@ public class PlayerController : NetworkBehaviour
         _playerManager.inputReader.InteractEvent += OnInteract;
         _playerManager.inputReader.SprintEvent += OnSprint;
         _playerManager.inputReader.AttackEvent += OnAttack;
+        _playerManager.inputReader.DefenceEvent += OnDefence;
     }
 
     private void Start()
@@ -167,6 +176,20 @@ public class PlayerController : NetworkBehaviour
         _attackCooldownTimer = attackCooldown; // Set cooldown duration
     }
 
+    private void OnDefence(bool state)
+    {
+        if (state)
+        {
+            if (_defenceCooldownTimer > 0) return;
+            PlayerDefend(state);
+            _defenceCooldownTimer = defenceCooldown; // Set cooldown duration
+        }
+        else
+        {
+            PlayerDefend(state);
+        }
+    }
+
     private void OnInteract()
     {
         CheckForPickupableAndInteractableCollision();
@@ -182,6 +205,11 @@ public class PlayerController : NetworkBehaviour
         if (_attackCooldownTimer > 0)
         {
             _attackCooldownTimer -= Time.deltaTime;
+        }
+
+        if (_defenceCooldownTimer > 0)
+        {
+            _defenceCooldownTimer -= Time.deltaTime;
         }
 
         if (enableSprint)
@@ -401,8 +429,15 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    private void PlayerDefend(bool state)
+    {
+        Debug.Log("player defending" + state);
+        _playerManager.playerEvents.PlayerDefence(state);
+    }
+
     private void CheckForWeapons()
     {
+        //TODO: network variable with a damage based on the weapon
         HitObject(hitDamage);
     }
 
