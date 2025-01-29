@@ -2,9 +2,9 @@ using DG.Tweening;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Barrel : NetworkBehaviour, IDestrucable
+public class Barrel : NetworkBehaviour, IDamagable
 {
-    [SerializeField] private DestructableSettings _destructableSettings;
+    [SerializeField] private DamagableSettings _destructableSettings;
 
     private readonly NetworkVariable<float> _health = new NetworkVariable<float>();
 
