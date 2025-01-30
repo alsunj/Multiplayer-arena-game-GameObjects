@@ -1,6 +1,7 @@
 using UnityEngine;
 
-public interface IDestrucable
+public interface IDamagable
 {
+    
     void TakeDamage(float damage);
 }

@@ -437,8 +437,21 @@ public class PlayerController : NetworkBehaviour
 
     private void CheckForWeapons()
     {
-        //TODO: network variable with a damage based on the weapon
-        HitObject(hitDamage);
+        if (_playerPlacements.playerRightHand != null)
+        {
+            var explosive = _playerPlacements.playerRightHand.GetComponent<Explosive>();
+            if (explosive != null)
+            {
+                Vector3 throwDirection = transform.forward;
+                explosive.Throw(throwDirection);
+                
+            }
+        }
+        else
+        {
+            HitObject(hitDamage);
+
+        }
     }
 
     private void HitObject(float weaponHitDamage)
@@ -449,7 +462,7 @@ public class PlayerController : NetworkBehaviour
 
         if (closestCollider != null)
         {
-            switch (closestCollider.GetComponent<IDestrucable>())
+            switch (closestCollider.GetComponent<IDamagable>())
             {
                 case Barrel barrel:
                     RotatePlayerTowardsTarget(closestCollider);
