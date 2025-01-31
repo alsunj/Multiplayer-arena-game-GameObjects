@@ -14,7 +14,7 @@ public class PlayerAnimator : NetworkBehaviour
     private PlayerEvents _playerEvents;
     private Animator _animator;
 
-    private void Awake()
+    private void Start()
     {
         _animator = GetComponentInChildren<Animator>();
     }
@@ -45,13 +45,6 @@ public class PlayerAnimator : NetworkBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (!IsOwner)
-        {
-            return;
-        }
-    }
 
     private void SetPlayerRunBool(bool state)
     {
@@ -76,9 +69,9 @@ public class PlayerAnimator : NetworkBehaviour
     private void SetPlayerDefence(bool state)
     {
         _animator.SetBool(IS_DEFENDING, state);
-        if (state)
-        {
-            _animator.CrossFade(IS_DEFENDING, 0.1f, -1, 0, 1f);
-        }
+        // if (state)
+        // {
+        //     _animator.CrossFade(IS_DEFENDING, 1f);
+        // }
     }
 }

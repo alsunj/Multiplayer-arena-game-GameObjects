@@ -437,21 +437,22 @@ public class PlayerController : NetworkBehaviour
 
     private void CheckForWeapons()
     {
-        if (_playerPlacements.playerRightHand != null)
-        {
-            var explosive = _playerPlacements.playerRightHand.GetComponent<Explosive>();
-            if (explosive != null)
-            {
-                Vector3 throwDirection = transform.forward;
-                explosive.Throw(throwDirection);
-                
-            }
-        }
-        else
-        {
-            HitObject(hitDamage);
-
-        }
+        //TODO: here it has to make a request to server and check playerRightHandItem
+        // if (_playerPlacements.playerRightHand != null)
+        // {
+        //     Debug.Log(_playerPlacements.playerRightHand.name);
+        //     var explosive = _playerPlacements.playerRightHand.GetComponent<Explosive>();
+        //     if (explosive != null)
+        //     {
+        //         Vector3 throwDirection = transform.forward;
+        //         explosive.Throw(throwDirection);
+        //     }
+        // }
+        // else
+        // {
+        //     Debug.Log("hitobject");
+        HitObject(hitDamage);
+        //}
     }
 
     private void HitObject(float weaponHitDamage)

@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Key : Pickupable, IPickupable
+public class Key : Pickupable
 {
     // private Quaternion _startingRotation;
     private BoxCollider _boxCollider;
