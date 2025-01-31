@@ -7,10 +7,15 @@ public class Enemy : MonoBehaviour
     [SerializeField] private EnemySettings enemySettings;
     [SerializeField] private GameObject arrow;
     [SerializeField] private GameObject weapon;
+    private EnemyManager _enemyManager;
+    private EnemyAnimator _enemyAnimator;
     private GameObject _instantiatedArrow;
     private Transform _arrowSpawnPoint;
     private float _shootingTimer;
     private bool _isCrossbowLoaded;
+    private bool _isAiming;
+    private Vector3 _LookingDirection;
+    private bool _targetLocked;
 
 
     private Collider[]
@@ -18,6 +23,28 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
+        _enemyManager = GetComponent<EnemyManager>();
+        if (_enemyManager != null)
+        {
+            _enemyManager.Initialize();
+        }
+        else
+        {
+            Debug.LogError("EnemyManager is not set in the inspector");
+        }
+
+        _enemyAnimator = GetComponentInChildren<EnemyAnimator>();
+        if (_enemyAnimator != null)
+        {
+            _enemyAnimator.InitializeEvents(_enemyManager.enemyEvents);
+            _enemyAnimator.receiveTargetShotEventFromAnimator += TargetShotEndEvent;
+            _enemyAnimator.receiveTargetAimedEventFromAnimator += ShootTarget;
+        }
+        else
+        {
+            Debug.LogError("EnemyAnimator is not found as a child");
+        }
+
         if (enemySettings == null)
         {
             throw new Exception("EnemySettings is not set in the inspector");
@@ -54,61 +81,73 @@ public class Enemy : MonoBehaviour
         if (_shootingTimer > 0)
         {
             _shootingTimer -= Time.deltaTime;
-        }
-        else if (!_isCrossbowLoaded)
-        {
-            ReloadArrow();
+            return;
         }
 
-        ScanForCollision();
+        if (!_targetLocked)
+        {
+            ScanForCollision();
+        }
     }
 
-    private void ReloadArrow()
+
+    public void TargetShotEndEvent()
     {
+        Debug.Log("Event received");
         _instantiatedArrow.transform.SetParent(weapon.transform);
         _instantiatedArrow.transform.position = _arrowSpawnPoint.position;
         _instantiatedArrow.transform.rotation = _arrowSpawnPoint.rotation;
         _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
         _isCrossbowLoaded = true;
+        _targetLocked = false;
     }
 
     private void ScanForCollision()
     {
-        int numColliders = Physics.OverlapSphereNonAlloc(transform.position, enemySettings.detectionRange, hitColliders,
-            enemySettings.targetLayer);
-        for (int i = 0; i < numColliders; i++)
+        if (_isCrossbowLoaded && _shootingTimer <= 0)
         {
-            if (_shootingTimer > 0)
+            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, enemySettings.detectionRange,
+                hitColliders,
+                enemySettings.targetLayer);
+            if (numColliders > 0)
             {
-                RotateTowardsTarget(hitColliders[i]);
-            }
-            else
-            {
-                RotateTowardsTargetAndShootArrow(hitColliders[i]);
+                Collider closestCollider = null;
+                float closestDistance = float.MaxValue;
+
+                for (int i = 0; i < numColliders; i++)
+                {
+                    float distance = Vector3.Distance(transform.position, hitColliders[i].transform.position);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestCollider = hitColliders[i];
+                    }
+                }
+
+                _targetLocked = true;
+
+                RotateTowardsTarget(closestCollider);
             }
         }
     }
 
     private void RotateTowardsTarget(Collider hitCollider)
     {
-        Vector3 direction = (hitCollider.transform.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.DORotateQuaternion(lookRotation, 0.7f);
+        _enemyManager.enemyEvents.EnemyAim();
+        _LookingDirection = (hitCollider.transform.position - transform.position).normalized;
+        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(_LookingDirection.x, 0, _LookingDirection.z));
+        transform.DORotateQuaternion(lookRotation, 0.5f);
+        //    .OnComplete(() => { _enemyManager.enemyEvents.EnemyAim(false); });
     }
 
-    private void RotateTowardsTargetAndShootArrow(Collider hitCollider)
+    private void ShootTarget()
     {
-        Vector3 direction = (hitCollider.transform.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.DORotateQuaternion(lookRotation, 0.7f).OnComplete(() =>
-        {
-            _instantiatedArrow.transform.SetParent(null);
-            _instantiatedArrow.transform.rotation = weapon.transform.rotation;
-            _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity =
-                direction * enemySettings.shootingRange;
-            _shootingTimer = enemySettings.shootingDelay;
-            _isCrossbowLoaded = false;
-            //TODO: add delay for enemy to not rotate before the weapon is shot.
-        });
+        _instantiatedArrow.transform.SetParent(null);
+        _instantiatedArrow.transform.rotation = weapon.transform.rotation;
+        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity =
+            _LookingDirection * enemySettings.shootingRange;
+        _shootingTimer = enemySettings.shootingDelay;
+        _isCrossbowLoaded = false;
+        _enemyManager.enemyEvents.EnemyAttack();
     }
 }

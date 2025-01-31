@@ -4,7 +4,7 @@ using UnityEngine;
 public class FollowTransform : MonoBehaviour
 {
     private ISwitchPlayerMap _targetPlayerControls;
-    private Transform targetTransform;
+    private Transform _targetTransform;
     private Quaternion _startingRotation;
 
 
@@ -27,7 +27,7 @@ public class FollowTransform : MonoBehaviour
             _targetPlayerControls.TurnOffPlayerControls();
             transform.DOMove(targetTransform.position, followTransformSettings.pickupDuration).OnComplete(() =>
             {
-                this.targetTransform = targetTransform;
+                this._targetTransform = targetTransform;
                 _targetPlayerControls.TurnOnPlayerControls();
             });
         }
@@ -39,22 +39,22 @@ public class FollowTransform : MonoBehaviour
         transform.DOMove(putDownPosition, followTransformSettings.putDownDuration).OnComplete(() =>
         {
             transform.rotation = _startingRotation;
-            targetTransform = null;
             _targetPlayerControls.TurnOnPlayerControls();
+            SetTargetPlayerControls(null);
+            _targetTransform = null;
         });
-
-        SetTargetPlayerControls(null);
     }
 
     private void LateUpdate()
     {
-        if (targetTransform == null)
+        if (_targetTransform == null)
         {
             return;
         }
 
-        transform.position = targetTransform.position + followTransformSettings.targetPositionOffset;
-        Vector3 targetEulerAngles = targetTransform.rotation.eulerAngles + followTransformSettings.targetRotationOffset;
+        transform.position = _targetTransform.position + followTransformSettings.targetPositionOffset;
+        Vector3 targetEulerAngles =
+            _targetTransform.rotation.eulerAngles + followTransformSettings.targetRotationOffset;
         transform.rotation = Quaternion.Euler(targetEulerAngles);
     }
 }
