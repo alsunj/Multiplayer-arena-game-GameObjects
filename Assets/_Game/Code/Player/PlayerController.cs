@@ -8,7 +8,6 @@ public class PlayerController : NetworkBehaviour
     #region components
 
     [SerializeField] private PlayerInteractionSettings playerInteractionSettings;
-    [SerializeField] private float speed = 2f;
     private PlayerPlacements _playerPlacements;
     private PlayerManager _playerManager;
     private PlayerAnimator _playerAnimator;

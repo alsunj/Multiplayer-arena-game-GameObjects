@@ -40,6 +40,7 @@ public class Enemy : NetworkBehaviour
             _enemyAnimator.InitializeEvents(_enemyManager.enemyEvents);
             _enemyAnimator.receiveTargetShotEventFromAnimator += TargetShotEndEventServerRpc;
             _enemyAnimator.receiveTargetAimedEventFromAnimator += ShootTargetServerRpc;
+            _enemyAnimator.receiveTargetReloadEventFromAnimator += ReloadCrossbowServerRpc;
         }
         else
         {
@@ -68,8 +69,7 @@ public class Enemy : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
-    public void InstantiateArrowServerRpc()
+    public void InstantiateArrowServer()
     {
         _instantiatedArrow = Instantiate(arrow, _arrowSpawnPoint.position, _arrowSpawnPoint.rotation)
             .GetComponent<NetworkObject>();
@@ -97,22 +97,34 @@ public class Enemy : NetworkBehaviour
     [ServerRpc(RequireOwnership = false)]
     public void TargetShotEndEventServerRpc()
     {
-        _instantiatedArrow.transform.SetParent(weapon.transform);
-        _instantiatedArrow.transform.position = _arrowSpawnPoint.position;
-        _instantiatedArrow.transform.rotation = _arrowSpawnPoint.rotation;
-        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-        _isCrossbowLoaded = true;
-        _targetLocked = false;
-
-        UpdateArrowTransformClientRpc(_arrowSpawnPoint.position, _arrowSpawnPoint.rotation);
+        UpdateArrowTransformClientRpc(new NetworkObjectReference(_instantiatedArrow), _arrowSpawnPoint.position,
+            _arrowSpawnPoint.rotation);
     }
 
+
     [ClientRpc]
-    private void UpdateArrowTransformClientRpc(Vector3 position, Quaternion rotation)
+    private void UpdateArrowTransformClientRpc(NetworkObjectReference arrowReference, Vector3 position,
+        Quaternion rotation)
     {
+        if (arrowReference.TryGet(out NetworkObject arrowObject))
+        {
+            // arrowObject.transform.position = position;
+            // arrowObject.transform.rotation = rotation;
+        }
+
+        _enemyManager.enemyEvents.EnemyReload();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ReloadCrossbowServerRpc()
+    {
+        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+        // _instantiatedArrow.gameObject.SetActive(false);
+        _instantiatedArrow.transform.position = _arrowSpawnPoint.position;
+        _instantiatedArrow.transform.rotation = _arrowSpawnPoint.rotation;
         _instantiatedArrow.transform.SetParent(weapon.transform);
-        _instantiatedArrow.transform.position = position;
-        _instantiatedArrow.transform.rotation = rotation;
+        _targetLocked = false;
+        _isCrossbowLoaded = true;
     }
 
 

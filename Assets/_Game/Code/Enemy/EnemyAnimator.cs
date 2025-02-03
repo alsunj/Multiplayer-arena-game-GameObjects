@@ -14,6 +14,7 @@ public class EnemyAnimator : MonoBehaviour
 
     public event Action receiveTargetShotEventFromAnimator;
     public event Action receiveTargetAimedEventFromAnimator;
+    public event Action receiveTargetReloadEventFromAnimator;
 
     private void Start()
     {
@@ -48,6 +49,11 @@ public class EnemyAnimator : MonoBehaviour
     private void ReceiveTargetAimedEventFromAnimator()
     {
         receiveTargetAimedEventFromAnimator?.Invoke();
+    }
+
+    private void ReceiveTargetReloadEventFromAnimator()
+    {
+        receiveTargetReloadEventFromAnimator?.Invoke();
     }
 
     private void ReceiveTargetShotEventFromAnimator()

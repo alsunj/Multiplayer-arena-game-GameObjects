@@ -1597,29 +1597,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1124603564526040129, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 2413355888
+      objectReference: {fileID: 0}
+    - target: {fileID: 1124603564526040129, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 389880154
+      objectReference: {fileID: 0}
+    - target: {fileID: 1809229122743856241, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 3328335443
+      objectReference: {fileID: 0}
+    - target: {fileID: 1809229122743856241, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
+      propertyPath: InScenePlacedSourceGlobalObjectIdHash
+      value: 389880154
+      objectReference: {fileID: 0}
     - target: {fileID: 4994959905079220019, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
       propertyPath: m_Name
       value: Managers
       objectReference: {fileID: 0}
-    - target: {fileID: 5309338641683597751, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 3634099223
-      objectReference: {fileID: 0}
-    - target: {fileID: 5309338641683597751, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
-      propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 389880154
-      objectReference: {fileID: 0}
     - target: {fileID: 6720401888809174077, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2107378644
-      objectReference: {fileID: 0}
-    - target: {fileID: 6858498360178397575, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
-      propertyPath: GlobalObjectIdHash
-      value: 1273405995
-      objectReference: {fileID: 0}
-    - target: {fileID: 6858498360178397575, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
-      propertyPath: InScenePlacedSourceGlobalObjectIdHash
-      value: 389880154
       objectReference: {fileID: 0}
     - target: {fileID: 7801895876235266027, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1660,10 +1660,6 @@ PrefabInstance:
     - target: {fileID: 7801895876235266027, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 9062467029572671860, guid: c3c6003d148e24045a5699c460b258c9, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

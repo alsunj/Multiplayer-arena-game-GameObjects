@@ -15,7 +15,7 @@ public class ClientManager : NetworkBehaviour
     {
         if (NetworkManager.Singleton.IsConnectedClient)
         {
-            GameManager gameManager = FindObjectOfType<GameManager>();
+            GameManager gameManager = FindFirstObjectByType<GameManager>();
             if (gameManager != null)
             {
                 gameManager.RequestTimerStateServerRpc();
