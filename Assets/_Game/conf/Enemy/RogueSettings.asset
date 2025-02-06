@@ -17,4 +17,4 @@ MonoBehaviour:
     m_Bits: 512
   detectionRange: 7
   shootingRange: 10
-  shootingDelay: 2
+  shootingDelay: 4

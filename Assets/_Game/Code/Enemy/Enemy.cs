@@ -1,20 +1,21 @@
 using System;
 using DG.Tweening;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Enemy : MonoBehaviour
+public class Enemy : NetworkBehaviour
 {
     [SerializeField] private EnemySettings enemySettings;
     [SerializeField] private GameObject arrow;
     [SerializeField] private GameObject weapon;
     private EnemyManager _enemyManager;
     private EnemyAnimator _enemyAnimator;
-    private GameObject _instantiatedArrow;
+    private NetworkObject _instantiatedArrow;
     private Transform _arrowSpawnPoint;
     private float _shootingTimer;
     private bool _isCrossbowLoaded;
     private bool _isAiming;
-    private Vector3 _LookingDirection;
+    private Vector3 _lookingDirection;
     private bool _targetLocked;
 
 
@@ -37,8 +38,9 @@ public class Enemy : MonoBehaviour
         if (_enemyAnimator != null)
         {
             _enemyAnimator.InitializeEvents(_enemyManager.enemyEvents);
-            _enemyAnimator.receiveTargetShotEventFromAnimator += TargetShotEndEvent;
-            _enemyAnimator.receiveTargetAimedEventFromAnimator += ShootTarget;
+            _enemyAnimator.receiveTargetShotEventFromAnimator += TargetShotEndEventServerRpc;
+            _enemyAnimator.receiveTargetAimedEventFromAnimator += ShootTargetServerRpc;
+            _enemyAnimator.receiveTargetReloadEventFromAnimator += ReloadCrossbowServerRpc;
         }
         else
         {
@@ -65,19 +67,20 @@ public class Enemy : MonoBehaviour
         {
             throw new Exception("ArrowSpawnPoint is not found as a child of Weapon");
         }
-
-        InstantiateArrow();
     }
 
-    private void InstantiateArrow()
+    public void InstantiateArrowServer()
     {
-        _instantiatedArrow = Instantiate(arrow, _arrowSpawnPoint.position, _arrowSpawnPoint.rotation);
+        _instantiatedArrow = Instantiate(arrow, _arrowSpawnPoint.position, _arrowSpawnPoint.rotation)
+            .GetComponent<NetworkObject>();
+        _instantiatedArrow.Spawn();
         _instantiatedArrow.transform.SetParent(weapon.transform);
         _isCrossbowLoaded = true;
     }
 
     private void Update()
     {
+        if (!IsServer) return;
         if (_shootingTimer > 0)
         {
             _shootingTimer -= Time.deltaTime;
@@ -86,23 +89,47 @@ public class Enemy : MonoBehaviour
 
         if (!_targetLocked)
         {
-            ScanForCollision();
+            ScanForCollisionServerRpc();
         }
     }
 
 
-    public void TargetShotEndEvent()
+    [ServerRpc(RequireOwnership = false)]
+    public void TargetShotEndEventServerRpc()
     {
-        Debug.Log("Event received");
-        _instantiatedArrow.transform.SetParent(weapon.transform);
-        _instantiatedArrow.transform.position = _arrowSpawnPoint.position;
-        _instantiatedArrow.transform.rotation = _arrowSpawnPoint.rotation;
-        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-        _isCrossbowLoaded = true;
-        _targetLocked = false;
+        UpdateArrowTransformClientRpc(new NetworkObjectReference(_instantiatedArrow), _arrowSpawnPoint.position,
+            _arrowSpawnPoint.rotation);
     }
 
-    private void ScanForCollision()
+
+    [ClientRpc]
+    private void UpdateArrowTransformClientRpc(NetworkObjectReference arrowReference, Vector3 position,
+        Quaternion rotation)
+    {
+        if (arrowReference.TryGet(out NetworkObject arrowObject))
+        {
+            // arrowObject.transform.position = position;
+            // arrowObject.transform.rotation = rotation;
+        }
+
+        _enemyManager.enemyEvents.EnemyReload();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ReloadCrossbowServerRpc()
+    {
+        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
+        // _instantiatedArrow.gameObject.SetActive(false);
+        _instantiatedArrow.transform.position = _arrowSpawnPoint.position;
+        _instantiatedArrow.transform.rotation = _arrowSpawnPoint.rotation;
+        _instantiatedArrow.transform.SetParent(weapon.transform);
+        _targetLocked = false;
+        _isCrossbowLoaded = true;
+    }
+
+
+    [ServerRpc]
+    private void ScanForCollisionServerRpc()
     {
         if (_isCrossbowLoaded && _shootingTimer <= 0)
         {
@@ -126,28 +153,38 @@ public class Enemy : MonoBehaviour
 
                 _targetLocked = true;
 
-                RotateTowardsTarget(closestCollider);
+                RotateTowardsTargetClientRpc(closestCollider.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
             }
         }
     }
 
-    private void RotateTowardsTarget(Collider hitCollider)
+    [ClientRpc]
+    private void RotateTowardsTargetClientRpc(ulong targetNetworkObjectId)
     {
-        _enemyManager.enemyEvents.EnemyAim();
-        _LookingDirection = (hitCollider.transform.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(_LookingDirection.x, 0, _LookingDirection.z));
-        transform.DORotateQuaternion(lookRotation, 0.5f);
-        //    .OnComplete(() => { _enemyManager.enemyEvents.EnemyAim(false); });
+        var targetObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetNetworkObjectId];
+        if (targetObject != null)
+        {
+            _enemyManager.enemyEvents.EnemyAim();
+            _lookingDirection = (targetObject.transform.position - transform.position).normalized;
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(_lookingDirection.x, 0, _lookingDirection.z));
+            transform.DORotateQuaternion(lookRotation, 0.5f);
+        }
     }
 
-    private void ShootTarget()
+    [ServerRpc(RequireOwnership = false)]
+    private void ShootTargetServerRpc()
     {
         _instantiatedArrow.transform.SetParent(null);
         _instantiatedArrow.transform.rotation = weapon.transform.rotation;
-        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity =
-            _LookingDirection * enemySettings.shootingRange;
+        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = _lookingDirection * enemySettings.shootingRange;
         _shootingTimer = enemySettings.shootingDelay;
         _isCrossbowLoaded = false;
+        ShootTargetClientRpc();
+    }
+
+    [ClientRpc]
+    private void ShootTargetClientRpc()
+    {
         _enemyManager.enemyEvents.EnemyAttack();
     }
 }
