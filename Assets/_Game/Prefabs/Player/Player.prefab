@@ -229,7 +229,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   playerInteractionSettings: {fileID: 11400000, guid: 1bc75bcaab451a44d8a71f0189dc90f8, type: 2}
-  speed: 2
   offset: {x: 0, y: 7.4, z: -6.4}
   enableSprint: 1
   unlimitedSprint: 0

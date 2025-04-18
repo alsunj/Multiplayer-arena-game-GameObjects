@@ -171,7 +171,7 @@ public class Enemy : NetworkBehaviour
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void ShootTargetServerRpc()
     {
         _instantiatedArrow.transform.SetParent(null);
