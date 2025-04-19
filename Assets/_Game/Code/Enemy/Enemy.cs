@@ -64,9 +64,12 @@ public class Enemy : NetworkBehaviour
 
         _arrowSpawnPoint = weapon.transform.Find("ArrowSpawnPoint");
         if (_arrowSpawnPoint == null)
+
         {
             throw new Exception("ArrowSpawnPoint is not found as a child of Weapon");
         }
+
+        InstantiateArrowServer();
     }
 
     public void InstantiateArrowServer()
@@ -74,7 +77,7 @@ public class Enemy : NetworkBehaviour
         _instantiatedArrow = Instantiate(arrow, _arrowSpawnPoint.position, _arrowSpawnPoint.rotation)
             .GetComponent<NetworkObject>();
         _instantiatedArrow.Spawn();
-        _instantiatedArrow.transform.SetParent(weapon.transform);
+        // _instantiatedArrow.transform.SetParent(weapon.transform);
         _isCrossbowLoaded = true;
     }
 
@@ -108,8 +111,8 @@ public class Enemy : NetworkBehaviour
     {
         if (arrowReference.TryGet(out NetworkObject arrowObject))
         {
-            // arrowObject.transform.position = position;
-            // arrowObject.transform.rotation = rotation;
+            arrowObject.transform.position = position;
+            arrowObject.transform.rotation = rotation;
         }
 
         _enemyManager.enemyEvents.EnemyReload();
@@ -122,7 +125,7 @@ public class Enemy : NetworkBehaviour
         // _instantiatedArrow.gameObject.SetActive(false);
         _instantiatedArrow.transform.position = _arrowSpawnPoint.position;
         _instantiatedArrow.transform.rotation = _arrowSpawnPoint.rotation;
-        _instantiatedArrow.transform.SetParent(weapon.transform);
+//        _instantiatedArrow.transform.SetParent(weapon.transform);
         _targetLocked = false;
         _isCrossbowLoaded = true;
     }

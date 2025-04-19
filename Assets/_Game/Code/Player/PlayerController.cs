@@ -128,7 +128,7 @@ public class PlayerController : NetworkBehaviour
             _playerAnimator.InitializeEvents(_playerManager.playerEvents);
         }
 
-        _camera = FindFirstObjectByType<Camera>();
+        _camera = Camera.main;
         if (_camera == null)
         {
             Debug.LogError("Camera is null");

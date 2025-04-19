@@ -16,14 +16,6 @@ public class EnemyAnimator : MonoBehaviour
     public event Action receiveTargetAimedEventFromAnimator;
     public event Action receiveTargetReloadEventFromAnimator;
 
-    private void Start()
-    {
-        _animator = GetComponentInChildren<Animator>();
-        if (_animator == null)
-        {
-            Debug.LogError("Animator component not found in children.");
-        }
-    }
 
     private void OnDisable()
     {
@@ -37,6 +29,12 @@ public class EnemyAnimator : MonoBehaviour
 
     public void InitializeEvents(EnemyEvents enemyEvents)
     {
+        _animator = GetComponentInChildren<Animator>();
+        if (_animator == null)
+        {
+            Debug.LogError("Animator component not found in children.");
+        }
+
         this._enemyEvents = enemyEvents;
         if (_enemyEvents != null)
         {
@@ -68,7 +66,14 @@ public class EnemyAnimator : MonoBehaviour
 
     private void SetEnemyAim()
     {
-        _animator.SetTrigger(IS_AIMING);
+        if (_animator != null)
+        {
+            _animator.SetTrigger(IS_AIMING);
+        }
+        else
+        {
+            Debug.LogError("Animator is null when SetEnemyAim is called on " + gameObject.name);
+        }
     }
 
     private void SetEnemyAttack()
