@@ -281,6 +281,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 529219306}
+  - component: {fileID: 529219308}
   - component: {fileID: 529219307}
   m_Layer: 0
   m_Name: ConnectionManager
@@ -316,6 +317,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 073290f5692bc3e468889c25d8a4f3e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  _WaitingPlayerPanel: {fileID: 1405885247}
+  _waitingText: {fileID: 1216956540}
+  _countdownPanel: {fileID: 2138866768}
+  _countdownText: {fileID: 1593960351}
+  _connectionPanel: {fileID: 1517982078}
   _addressField: {fileID: 776996437}
   _portField: {fileID: 1656278101}
   _connectionModeDropdown: {fileID: 1746526225}
@@ -329,6 +336,33 @@ MonoBehaviour:
   _gameStartCountDownTime: 2
   _slimeSpawnCooldownTime: 0.1
   _rogueSpawnCooldownTime: 1
+  playerPrefab: {fileID: 7039287367920326276, guid: 702bb31d143eeaa4792be36b28160445, type: 3}
+  _startGameCountdownTimer: 10
+--- !u!114 &529219308
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 529219305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 1225910293
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &776996437 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5737202750316455812, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
@@ -345,6 +379,17 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 856385695763539090, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
   m_PrefabInstance: {fileID: 5176588386858245479}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1216956540 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5516049037900670687, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+  m_PrefabInstance: {fileID: 5176588386858245479}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1233896419
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -403,6 +448,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7022544978650153336, guid: f6024856153867c408043e682ddcac1e, type: 3}
       propertyPath: NetworkConfig.ForceSamePrefabs
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7022544978650153336, guid: f6024856153867c408043e682ddcac1e, type: 3}
+      propertyPath: NetworkConfig.ConnectionApproval
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7022544978650153336, guid: f6024856153867c408043e682ddcac1e, type: 3}
+      propertyPath: NetworkConfig.EnableSceneManagement
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -421,6 +474,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1405885247 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8843338606411401250, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+  m_PrefabInstance: {fileID: 5176588386858245479}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1517982078 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4013928434927110539, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+  m_PrefabInstance: {fileID: 5176588386858245479}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1544296584 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7340525383002667710, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
@@ -435,6 +498,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 2da0c512f12947e489f739169773d7ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1593960351 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 155486888234904070, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+  m_PrefabInstance: {fileID: 5176588386858245479}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &1643671676 stripped
@@ -549,6 +623,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b743370ac3e4ec2a1668f5455a8ef8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &2138866768 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5941479522577420387, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+  m_PrefabInstance: {fileID: 5176588386858245479}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5176588386858245479
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -825,6 +904,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5941479522577420387, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6271467599557108680, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -921,6 +1004,14 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8843338606411401250, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+      propertyPath: m_Name
+      value: WaitingPlayerPanel
+      objectReference: {fileID: 0}
+    - target: {fileID: 8843338606411401250, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8875326252354947531, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
       propertyPath: m_Pivot.x
       value: 0
@@ -1010,8 +1101,8 @@ PrefabInstance:
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
-  - {fileID: 529219306}
   - {fileID: 321845824}
-  - {fileID: 1670129068}
+  - {fileID: 529219306}
   - {fileID: 1233896419}
+  - {fileID: 1670129068}
   - {fileID: 5176588386858245479}
