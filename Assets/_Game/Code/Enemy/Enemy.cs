@@ -17,12 +17,9 @@ public class Enemy : NetworkBehaviour
     private bool _isAiming;
     private Vector3 _lookingDirection;
     private bool _targetLocked;
+    private Collider[] hitColliders;
 
-
-    private Collider[]
-        hitColliders = new Collider[10]; //TODO: this should be the amount of players connected to the network.
-
-    private void Start()
+    public void InitializeEnemy()
     {
         _enemyManager = GetComponent<EnemyManager>();
         if (_enemyManager != null)
@@ -38,7 +35,7 @@ public class Enemy : NetworkBehaviour
         if (_enemyAnimator != null)
         {
             _enemyAnimator.InitializeEvents(_enemyManager.enemyEvents);
-            _enemyAnimator.receiveTargetShotEventFromAnimator += TargetShotEndEventServerRpc;
+            _enemyAnimator.receiveTargetShotEventFromAnimator += TargetShotAnimationEndEventServerRpc;
             _enemyAnimator.receiveTargetAimedEventFromAnimator += ShootTargetServerRpc;
             _enemyAnimator.receiveTargetReloadEventFromAnimator += ReloadCrossbowServerRpc;
         }
@@ -52,32 +49,35 @@ public class Enemy : NetworkBehaviour
             throw new Exception("EnemySettings is not set in the inspector");
         }
 
-        if (arrow == null)
-        {
-            throw new Exception("Arrow is not set in the inspector");
-        }
-
         if (weapon == null)
         {
             throw new Exception("Weapon is not set in the inspector");
         }
 
-        _arrowSpawnPoint = weapon.transform.Find("ArrowSpawnPoint");
+        _arrowSpawnPoint = weapon.transform.Find("Skeleton_Crossbow/ArrowSpawnPoint");
         if (_arrowSpawnPoint == null)
 
         {
             throw new Exception("ArrowSpawnPoint is not found as a child of Weapon");
         }
 
+        if (arrow == null)
+        {
+            throw new Exception("Arrow is not set in the inspector");
+        }
+
         InstantiateArrowServer();
+
+        hitColliders = new Collider[NetworkManager.Singleton.ConnectedClients.Count];
     }
+
 
     public void InstantiateArrowServer()
     {
         _instantiatedArrow = Instantiate(arrow, _arrowSpawnPoint.position, _arrowSpawnPoint.rotation)
             .GetComponent<NetworkObject>();
         _instantiatedArrow.Spawn();
-        // _instantiatedArrow.transform.SetParent(weapon.transform);
+        _instantiatedArrow.GetComponent<Arrow>().SetTargetTransform(_arrowSpawnPoint.transform);
         _isCrossbowLoaded = true;
     }
 
@@ -97,35 +97,23 @@ public class Enemy : NetworkBehaviour
     }
 
 
-    [ServerRpc(RequireOwnership = false)]
-    public void TargetShotEndEventServerRpc()
+    [ServerRpc]
+    public void TargetShotAnimationEndEventServerRpc()
     {
-        UpdateArrowTransformClientRpc(new NetworkObjectReference(_instantiatedArrow), _arrowSpawnPoint.position,
-            _arrowSpawnPoint.rotation);
-    }
-
-
-    [ClientRpc]
-    private void UpdateArrowTransformClientRpc(NetworkObjectReference arrowReference, Vector3 position,
-        Quaternion rotation)
-    {
-        if (arrowReference.TryGet(out NetworkObject arrowObject))
-        {
-            arrowObject.transform.position = position;
-            arrowObject.transform.rotation = rotation;
-        }
-
+        _instantiatedArrow.GetComponent<Arrow>().RemoveTargetTransform();
+        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = _lookingDirection * enemySettings.shootingRange;
+        //UpdateArrowTransformClientRpc(new NetworkObjectReference(_instantiatedArrow), _arrowSpawnPoint.position,
+        //    _arrowSpawnPoint.rotation);
         _enemyManager.enemyEvents.EnemyReload();
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void ReloadCrossbowServerRpc()
     {
+        //_instantiatedArrow.gameObject.SetActive(false);
+        //  _instantiatedArrow.transform.SetParent(weapon.transform);
         _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = Vector3.zero;
-        // _instantiatedArrow.gameObject.SetActive(false);
-        _instantiatedArrow.transform.position = _arrowSpawnPoint.position;
-        _instantiatedArrow.transform.rotation = _arrowSpawnPoint.rotation;
-//        _instantiatedArrow.transform.SetParent(weapon.transform);
+        _instantiatedArrow.GetComponent<Arrow>().SetTargetTransform(_arrowSpawnPoint.transform);
         _targetLocked = false;
         _isCrossbowLoaded = true;
     }
@@ -155,39 +143,23 @@ public class Enemy : NetworkBehaviour
                 }
 
                 _targetLocked = true;
+                // RotateTowardsTargetClientRpc(closestCollider.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
 
-                RotateTowardsTargetClientRpc(closestCollider.gameObject.GetComponent<NetworkObject>().NetworkObjectId);
+                GameObject targetObject = closestCollider.gameObject;
+                _enemyManager.enemyEvents.EnemyAim();
+                _lookingDirection = (targetObject.transform.position - transform.position).normalized;
+                Quaternion lookRotation =
+                    Quaternion.LookRotation(new Vector3(_lookingDirection.x, 0, _lookingDirection.z));
+                transform.DORotateQuaternion(lookRotation, 0.5f);
             }
-        }
-    }
-
-    [ClientRpc]
-    private void RotateTowardsTargetClientRpc(ulong targetNetworkObjectId)
-    {
-        var targetObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[targetNetworkObjectId];
-        if (targetObject != null)
-        {
-            _enemyManager.enemyEvents.EnemyAim();
-            _lookingDirection = (targetObject.transform.position - transform.position).normalized;
-            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(_lookingDirection.x, 0, _lookingDirection.z));
-            transform.DORotateQuaternion(lookRotation, 0.5f);
         }
     }
 
     [ServerRpc]
     private void ShootTargetServerRpc()
     {
-        _instantiatedArrow.transform.SetParent(null);
-        _instantiatedArrow.transform.rotation = weapon.transform.rotation;
-        _instantiatedArrow.GetComponent<Rigidbody>().linearVelocity = _lookingDirection * enemySettings.shootingRange;
         _shootingTimer = enemySettings.shootingDelay;
         _isCrossbowLoaded = false;
-        ShootTargetClientRpc();
-    }
-
-    [ClientRpc]
-    private void ShootTargetClientRpc()
-    {
         _enemyManager.enemyEvents.EnemyAttack();
     }
 }

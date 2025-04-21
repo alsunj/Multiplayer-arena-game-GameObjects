@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 616231e36fe89cd42bd7aea67dfa0ace, type: 3}
   m_Name: RogueSettings
   m_EditorClassIdentifier: 
+  WeaponPrefab: {fileID: 6946634317865969344, guid: 9180e072eabc06f4c9448c5d26b5425e, type: 3}
   targetLayer:
     serializedVersion: 2
     m_Bits: 512

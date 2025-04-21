@@ -33,8 +33,9 @@ public class EnemySpawner : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        NetworkManager.Singleton.OnServerStarted += OnServerStartedServerRpc;
-        NetworkManager.Singleton.OnServerStopped += OnServerStoppedServerRpc;
+        OnServerStartedServerRpc();
+        //NetworkManager.Singleton.OnServerStarted += OnServerStartedServerRpc;
+        // NetworkManager.Singleton.OnServerStopped += OnServerStoppedServerRpc;
     }
 
     [ServerRpc]
@@ -42,14 +43,15 @@ public class EnemySpawner : MonoBehaviour
     {
         if (!state)
         {
-            NetworkManager.Singleton.OnServerStarted -= OnServerStartedServerRpc;
-            NetworkManager.Singleton.OnServerStopped -= OnServerStoppedServerRpc;
+            //  NetworkManager.Singleton.OnServerStarted -= OnServerStartedServerRpc;
+            //  NetworkManager.Singleton.OnServerStopped -= OnServerStoppedServerRpc;
         }
     }
 
     [ServerRpc]
     private void OnServerStartedServerRpc()
     {
+        Debug.Log("Setting up enemy spawner");
         ApplyExistingEnemyArrows();
         FindEnemySpawnPositions();
         FindEnemyConfig();
@@ -68,7 +70,9 @@ public class EnemySpawner : MonoBehaviour
         {
             if (_RogueEnemySpawnTimer <= 0f)
             {
-                Vector3 spawnPosition = GetSpawnPosition(_spawnedSlimeEnemyCount);
+                var random = new Unity.Mathematics.Random((uint)System.DateTime.Now.Ticks);
+                Vector3 spawnPosition = GetSpawnPosition(_spawnedRogueEnemyCount);
+                spawnPosition += new Vector3(random.NextFloat(-5f, 5f), 0, random.NextFloat(-5f, 5f));
                 SpawnRogueEnemyServerRpc(spawnPosition);
                 _spawnedRogueEnemyCount++;
                 _RogueEnemySpawnTimer = _RogueEnemySpawnCooldown;
@@ -85,7 +89,9 @@ public class EnemySpawner : MonoBehaviour
         {
             if (_SlimeEnemySpawnTimer <= 0f)
             {
+                var random = new Unity.Mathematics.Random((uint)System.DateTime.Now.Ticks);
                 Vector3 spawnPosition = GetSpawnPosition(_spawnedSlimeEnemyCount);
+                spawnPosition += new Vector3(random.NextFloat(-5f, 5f), 0, random.NextFloat(-5f, 5f));
                 SpawnSlimeEnemyServerRpc(spawnPosition);
 
                 _spawnedSlimeEnemyCount++;
@@ -105,7 +111,14 @@ public class EnemySpawner : MonoBehaviour
             GameObject spawnedEnemy =
                 Instantiate(_rogueEnemyPrefab, spawnPosition, Quaternion.identity, gameObject.transform);
             spawnedEnemy.GetComponent<NetworkObject>().Spawn();
+            SpawnEnemyForClientRpc(spawnedEnemy);
         }
+    }
+
+    [ClientRpc]
+    private void SpawnEnemyForClientRpc(GameObject spawnedEnemy)
+    {
+        spawnedEnemy.GetComponent<Enemy>().InitializeEnemy();
     }
 
     [ServerRpc]
@@ -115,6 +128,7 @@ public class EnemySpawner : MonoBehaviour
         {
             GameObject spawnedEnemy = Instantiate(_slimeEnemyPrefab, spawnPosition, Quaternion.identity);
             spawnedEnemy.GetComponent<NetworkObject>().Spawn();
+            //  spawnedEnemy.GetComponent<Enemy>().InitializeEnemy();
         }
     }
 

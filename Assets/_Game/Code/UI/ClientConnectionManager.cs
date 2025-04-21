@@ -222,11 +222,11 @@ public class ClientConnectionManager : NetworkBehaviour
         if (IsServer)
         {
             Scene gameScene = SceneManager.GetSceneByName(scenename);
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoadCompleted;
             SceneManager.MoveGameObjectToScene(NetworkManager.Singleton.gameObject, gameScene);
             SceneManager.MoveGameObjectToScene(gameConfigHolder, gameScene);
             SceneManager.SetActiveScene(gameScene);
             CheckSceneLoadCompletion(connectedClientIds, clientscompleted, clientstimedout);
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoadCompleted;
         }
     }
 
