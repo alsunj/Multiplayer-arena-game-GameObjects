@@ -16,5 +16,5 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   detectionRange: 7
-  shootingRange: 20
-  shootingDelay: 4
+  shootingRange: 15
+  shootingDelay: 5

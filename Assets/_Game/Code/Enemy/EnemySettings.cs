@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemySettings : ScriptableObject
 {
     public LayerMask targetLayer;
-    public float detectionRange = 7f;
-    public float shootingRange = 20f;
+    public int detectionRange = 7;
+    public int shootingRange = 20;
     public float shootingDelay = 1f;
 }

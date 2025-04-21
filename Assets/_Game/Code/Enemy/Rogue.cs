@@ -24,13 +24,13 @@ public class Rogue : AnimatedEnemy
     {
         if (IsServer)
         {
-            InitializeEnemy();
+            InitializeEnemy(enemySettings.detectionRange, enemySettings.targetLayer);
         }
     }
 
-    protected override void InitializeEnemy()
+    protected override void InitializeEnemy(int detectionRange, LayerMask targetLayerMask)
     {
-        base.InitializeEnemy();
+        base.InitializeEnemy(detectionRange, targetLayerMask);
         if (_enemyAnimator != null)
         {
             _enemyAnimator.receiveTargetShotEventFromAnimator += TargetShotEvent;
@@ -91,45 +91,50 @@ public class Rogue : AnimatedEnemy
             return;
         }
 
-        if (!_targetLocked)
+        if (Target)
         {
-            ScanForCollisionServerRpc();
+            RotateTowardsTarget();
         }
     }
 
 
-    [ServerRpc]
-    private void ScanForCollisionServerRpc()
+    // [ServerRpc]
+    // private void ScanForCollisionServerRpc()
+    // {
+    //     if (_isCrossbowLoaded && _shootingTimer <= 0)
+    //     {
+    //         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, enemySettings.detectionRange,
+    //             hitColliders,
+    //             enemySettings.targetLayer);
+    //         if (numColliders > 0)
+    //         {
+    //             Collider closestCollider = null;
+    //             float closestDistance = float.MaxValue;
+    //
+    //             for (int i = 0; i < numColliders; i++)
+    //             {
+    //                 float distance = Vector3.Distance(transform.position, hitColliders[i].transform.position);
+    //                 if (distance < closestDistance)
+    //                 {
+    //                     closestDistance = distance;
+    //                     closestCollider = hitColliders[i];
+    //                 }
+    //             }
+    //
+    //             _targetLocked = true;
+    //             GameObject targetObject = closestCollider.gameObject;
+    //             
+    //         }
+    //     }
+    // }
+
+    private void RotateTowardsTarget()
     {
-        if (_isCrossbowLoaded && _shootingTimer <= 0)
-        {
-            int numColliders = Physics.OverlapSphereNonAlloc(transform.position, enemySettings.detectionRange,
-                hitColliders,
-                enemySettings.targetLayer);
-            if (numColliders > 0)
-            {
-                Collider closestCollider = null;
-                float closestDistance = float.MaxValue;
-
-                for (int i = 0; i < numColliders; i++)
-                {
-                    float distance = Vector3.Distance(transform.position, hitColliders[i].transform.position);
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestCollider = hitColliders[i];
-                    }
-                }
-
-                _targetLocked = true;
-                GameObject targetObject = closestCollider.gameObject;
-                AimAtTarget();
-                _lookingDirection = (targetObject.transform.position - transform.position).normalized;
-                Quaternion lookRotation =
-                    Quaternion.LookRotation(new Vector3(_lookingDirection.x, 0, _lookingDirection.z));
-                transform.DORotateQuaternion(lookRotation, 0.5f);
-            }
-        }
+        _lookingDirection = (Target.position - transform.position).normalized;
+        Quaternion lookRotation =
+            Quaternion.LookRotation(new Vector3(_lookingDirection.x, 0, _lookingDirection.z));
+        transform.DORotateQuaternion(lookRotation, 0.5f);
+        AimAtTarget();
     }
 
     private void ShootTarget()

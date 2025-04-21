@@ -3,22 +3,19 @@ using UnityEngine;
 
 public class Enemy : NetworkBehaviour
 {
-    protected virtual void InitializeEnemy()
+    public int DetectionRadius { get; set; }
+    public Transform Target { get; set; }
+    public LayerMask TargetLayerMask { get; set; }
+
+    protected virtual void InitializeEnemy(int detectionRange, LayerMask targetLayerMask)
     {
+        DetectionRadius = detectionRange;
+        TargetLayerMask = targetLayerMask;
+        Target = null;
     }
 
-
-    public void SetTarget()
+    public override void OnDestroy()
     {
-    }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
+        TargetingManager.Instance.RemoveEnemyFromTargetingList(this);
     }
 }

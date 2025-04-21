@@ -111,6 +111,7 @@ public class EnemySpawner : MonoBehaviour
             GameObject spawnedEnemy =
                 Instantiate(_rogueEnemyPrefab, spawnPosition, Quaternion.identity, gameObject.transform);
             spawnedEnemy.GetComponent<NetworkObject>().Spawn();
+            TargetingManager.Instance.AddEnemyToTargetingList(spawnedEnemy.GetComponent<Enemy>());
             //  SpawnEnemyForClientRpc(spawnedEnemy);
         }
     }

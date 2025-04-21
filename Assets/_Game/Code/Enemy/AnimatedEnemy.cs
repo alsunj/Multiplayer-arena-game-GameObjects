@@ -6,9 +6,9 @@ public class AnimatedEnemy : Enemy
     protected EnemyAnimator _enemyAnimator;
     protected EnemyManager _enemyManager;
 
-    protected override void InitializeEnemy()
+    protected override void InitializeEnemy(int detectionRange, LayerMask targetLayerMask)
     {
-        base.InitializeEnemy();
+        base.InitializeEnemy(detectionRange, targetLayerMask);
         _enemyManager = GetComponent<EnemyManager>();
         if (_enemyManager != null)
         {
