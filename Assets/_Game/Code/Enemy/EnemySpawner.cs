@@ -52,7 +52,7 @@ public class EnemySpawner : MonoBehaviour
     private void OnServerStartedServerRpc()
     {
         Debug.Log("Setting up enemy spawner");
-        ApplyExistingEnemyArrows();
+        //  ApplyExistingEnemyArrows();
         FindEnemySpawnPositions();
         FindEnemyConfig();
         StartEnemySpawnTimers();
@@ -111,15 +111,14 @@ public class EnemySpawner : MonoBehaviour
             GameObject spawnedEnemy =
                 Instantiate(_rogueEnemyPrefab, spawnPosition, Quaternion.identity, gameObject.transform);
             spawnedEnemy.GetComponent<NetworkObject>().Spawn();
-            SpawnEnemyForClientRpc(spawnedEnemy);
+            //  SpawnEnemyForClientRpc(spawnedEnemy);
         }
     }
-
-    [ClientRpc]
-    private void SpawnEnemyForClientRpc(GameObject spawnedEnemy)
-    {
-        spawnedEnemy.GetComponent<Enemy>().InitializeEnemy();
-    }
+    //
+    // [ClientRpc]
+    // private void SpawnEnemyForClientRpc(GameObject spawnedEnemy)
+    // {
+    // }
 
     [ServerRpc]
     private void SpawnSlimeEnemyServerRpc(Vector3 spawnPosition)
@@ -149,22 +148,22 @@ public class EnemySpawner : MonoBehaviour
         _SlimeEnemySpawnTimer = _SlimeEnemySpawnCooldown;
     }
 
-    private void ApplyExistingEnemyArrows()
-    {
-        //  SpawnEnemyArrows();
-        var enemiesTransform = GameObject.Find("Enemies")?.transform;
-        if (enemiesTransform != null)
-        {
-            foreach (Transform child in enemiesTransform)
-            {
-                var enemy = child.GetComponent<Enemy>();
-                if (enemy != null)
-                {
-                    enemy.InstantiateArrowServer();
-                }
-            }
-        }
-    }
+    // private void ApplyExistingEnemyArrows()
+    // {
+    //     //  SpawnEnemyArrows();
+    //     var enemiesTransform = GameObject.Find("Enemies")?.transform;
+    //     if (enemiesTransform != null)
+    //     {
+    //         foreach (Transform child in enemiesTransform)
+    //         {
+    //             var enemy = child.GetComponent<Rogue>();
+    //             if (enemy != null)
+    //             {
+    //                 enemy.InstantiateArrowServer();
+    //             }
+    //         }
+    //     }
+    // }
 
 
     private void FindEnemySpawnPositions()

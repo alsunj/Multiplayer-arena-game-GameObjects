@@ -46,6 +46,7 @@ public class EnemyAnimator : MonoBehaviour
 
     private void ReceiveTargetAimedEventFromAnimator()
     {
+        Debug.Log("ReceiveTargetAimedEventFromAnimator");
         receiveTargetAimedEventFromAnimator?.Invoke();
     }
 
@@ -56,6 +57,7 @@ public class EnemyAnimator : MonoBehaviour
 
     private void ReceiveTargetShotEventFromAnimator()
     {
+        Debug.Log("ReceiveTargetShotEventFromAnimator");
         receiveTargetShotEventFromAnimator?.Invoke();
     }
 
@@ -66,14 +68,7 @@ public class EnemyAnimator : MonoBehaviour
 
     private void SetEnemyAim()
     {
-        if (_animator != null)
-        {
-            _animator.SetTrigger(IS_AIMING);
-        }
-        else
-        {
-            Debug.LogError("Animator is null when SetEnemyAim is called on " + gameObject.name);
-        }
+        _animator.SetTrigger(IS_AIMING);
     }
 
     private void SetEnemyAttack()
