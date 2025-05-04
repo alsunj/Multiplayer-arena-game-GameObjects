@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.PlayerLoop;
 
 public class TargetingManager : NetworkBehaviour
 {
     public static TargetingManager Instance { get; private set; }
     private Collider[] playerColliders;
-    private List<Enemy> enemies;
-1
+    private List<Enemy> enemies = new List<Enemy>();
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
@@ -32,16 +31,31 @@ public class TargetingManager : NetworkBehaviour
         {
             if (enemy != null)
             {
-                int numColliders = Physics.OverlapSphereNonAlloc(enemy.gameObject.transform.position,
+                int numColliders = Physics.OverlapSphereNonAlloc(enemy.transform.position,
                     enemy.DetectionRadius,
                     playerColliders, enemy.TargetLayerMask);
 
                 if (numColliders > 0)
                 {
+                    Transform closestPlayer = null;
+                    float closestDistanceSqr = Mathf.Infinity;
                     for (int i = 0; i < numColliders; i++)
                     {
-                        enemy.Target = playerColliders[i].gameObject.transform;
+                        float distanceSqr = (playerColliders[i].transform.position - enemy.transform.position)
+                            .sqrMagnitude;
+
+                        if (distanceSqr < closestDistanceSqr)
+                        {
+                            closestDistanceSqr = distanceSqr;
+                            closestPlayer = playerColliders[i].transform;
+                        }
                     }
+
+                    enemy.Target = closestPlayer;
+                }
+                else if (enemy.Target)
+                {
+                    enemy.Target = null;
                 }
             }
         }
@@ -66,6 +80,5 @@ public class TargetingManager : NetworkBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
     }
 }

@@ -7,4 +7,5 @@ public class EnemySettings : ScriptableObject
     public int detectionRange = 7;
     public int shootingRange = 20;
     public float shootingDelay = 1f;
+    public int speed = 5;
 }

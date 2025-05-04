@@ -15,8 +15,8 @@ TagManager:
   - Destructable
   - Pickupable
   - Player
-  - 
-  - 
+  - Enemy
+  - Dead
   - 
   - 
   - 

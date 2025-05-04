@@ -15,7 +15,8 @@ GameObject:
   - component: {fileID: 8058832186752717783}
   - component: {fileID: 7827702596890055830}
   - component: {fileID: 2932515728623351091}
-  m_Layer: 0
+  - component: {fileID: 8186436479367965102}
+  m_Layer: 10
   m_Name: Arrow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77,7 +78,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5029c6c72ae05b4419cabf4c1e96e35f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _boxCollider: {fileID: 0}
 --- !u!65 &8067914320767520699
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -177,6 +177,20 @@ MonoBehaviour:
   UseRigidBodyForMotion: 0
   AutoUpdateKinematicState: 1
   AutoSetKinematicOnDespawn: 1
+--- !u!114 &8186436479367965102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8885891558877188487}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da700a4056d148541bb6d90da82dce78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowTopMostFoldoutHeaderGroup: 1
+  _damageCollisionSettings: {fileID: 11400000, guid: 5ec78105fa51a87499146b383738cd6c, type: 2}
 --- !u!1001 &6279328471144270833
 PrefabInstance:
   m_ObjectHideFlags: 0

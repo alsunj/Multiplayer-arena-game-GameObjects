@@ -11,7 +11,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 
-public class ClientConnectionManager : NetworkBehaviour
+public class ConnectionManager : NetworkBehaviour
 {
     [SerializeField] private GameObject _WaitingPlayerPanel;
     [SerializeField] private TextMeshProUGUI _waitingText;
@@ -33,7 +33,8 @@ public class ClientConnectionManager : NetworkBehaviour
     [SerializeField] private int _gameStartCountDownTime;
     [SerializeField] private float _slimeSpawnCooldownTime;
     [SerializeField] private float _rogueSpawnCooldownTime;
-    [SerializeField] private GameObject playerPrefab; // Set the name in the Inspector
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private int playerHealth;
 
     [SerializeField] private int _startGameCountdownTimer = 10;
 
@@ -196,6 +197,13 @@ public class ClientConnectionManager : NetworkBehaviour
 
         UnloadSceneClientRpc("ConnectionScene");
         SpawnPlayers();
+        InvokeDestroyGameObjectClientRpc();
+        Destroy(gameObject);
+    }
+
+    [ClientRpc]
+    private void InvokeDestroyGameObjectClientRpc()
+    {
         Destroy(gameObject);
     }
 
@@ -219,16 +227,22 @@ public class ClientConnectionManager : NetworkBehaviour
     private void OnSceneLoadCompleted(string scenename, LoadSceneMode loadscenemode, List<ulong> clientscompleted,
         List<ulong> clientstimedout)
     {
-        if (IsServer)
-        {
-            Scene gameScene = SceneManager.GetSceneByName(scenename);
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoadCompleted;
-            SceneManager.MoveGameObjectToScene(NetworkManager.Singleton.gameObject, gameScene);
-            SceneManager.MoveGameObjectToScene(gameConfigHolder, gameScene);
-            SceneManager.SetActiveScene(gameScene);
-            CheckSceneLoadCompletion(connectedClientIds, clientscompleted, clientstimedout);
-        }
+        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoadCompleted;
+        Scene gameScene = SceneManager.GetSceneByName(scenename);
+        SceneManager.MoveGameObjectToScene(gameConfigHolder, gameScene);
+        CheckSceneLoadCompletion(connectedClientIds, clientscompleted, clientstimedout);
+        MoveNetworkManagerToNewSceneClientRpc(scenename);
     }
+
+
+    [ClientRpc]
+    private void MoveNetworkManagerToNewSceneClientRpc(string scenename)
+    {
+        Scene scene = SceneManager.GetSceneByName(scenename);
+        SceneManager.MoveGameObjectToScene(NetworkManager.Singleton.gameObject, scene);
+        SceneManager.SetActiveScene(scene);
+    }
+
 
     private void CheckSceneLoadCompletion(List<ulong> initialConnectedClientIds, List<ulong> clientsCompleted,
         List<ulong> clientsTimedOut)
@@ -285,7 +299,7 @@ public class ClientConnectionManager : NetworkBehaviour
     {
         foreach (ulong clientId in connectedClientIds)
         {
-            Vector3 spawnPosition = Vector3.zero;
+            Vector3 spawnPosition = new Vector3(Random.Range(-5, 5), 0, Random.Range(-5, 5));
             Quaternion spawnRotation = Quaternion.identity;
 
             GameObject spawnedPlayer = Instantiate(playerPrefab, spawnPosition, spawnRotation);
@@ -294,6 +308,7 @@ public class ClientConnectionManager : NetworkBehaviour
             if (networkObject != null)
             {
                 networkObject.SpawnAsPlayerObject(clientId, true);
+                spawnedPlayer.GetComponent<PlayerHealth>().InitializePlayerHealth(playerHealth);
             }
             else
             {

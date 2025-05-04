@@ -4,13 +4,7 @@ using UnityEngine.UIElements;
 
 public class Arrow : MonoBehaviour
 {
-    public BoxCollider _boxCollider;
     private Transform _targetTransform;
-
-    void Start()
-    {
-        _boxCollider = GetComponent<BoxCollider>();
-    }
 
     private void Update()
     {

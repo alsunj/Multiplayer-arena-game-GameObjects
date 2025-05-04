@@ -337,7 +337,8 @@ MonoBehaviour:
   _slimeSpawnCooldownTime: 0.1
   _rogueSpawnCooldownTime: 1
   playerPrefab: {fileID: 7039287367920326276, guid: 702bb31d143eeaa4792be36b28160445, type: 3}
-  _startGameCountdownTimer: 1
+  playerHealth: 100
+  _startGameCountdownTimer: 10
 --- !u!114 &529219308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1104,5 +1105,5 @@ SceneRoots:
   - {fileID: 321845824}
   - {fileID: 529219306}
   - {fileID: 1233896419}
-  - {fileID: 1670129068}
   - {fileID: 5176588386858245479}
+  - {fileID: 1670129068}

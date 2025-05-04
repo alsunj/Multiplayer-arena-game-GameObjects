@@ -1,10 +1,9 @@
 using System.Collections;
 using Unity.Netcode;
-using UnityEditor;
 using UnityEngine;
 
 
-public class EnemySpawner : MonoBehaviour
+public class EnemySpawnerManager : NetworkBehaviour
 {
     [SerializeField] private GameObject _rogueEnemyPrefab;
     [SerializeField] private GameObject _slimeEnemyPrefab;
@@ -29,29 +28,17 @@ public class EnemySpawner : MonoBehaviour
 
     #endregion
 
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        OnServerStartedServerRpc();
-        //NetworkManager.Singleton.OnServerStarted += OnServerStartedServerRpc;
-        // NetworkManager.Singleton.OnServerStopped += OnServerStoppedServerRpc;
-    }
-
-    [ServerRpc]
-    private void OnServerStoppedServerRpc(bool state)
-    {
-        if (!state)
+        if (IsServer)
         {
-            //  NetworkManager.Singleton.OnServerStarted -= OnServerStartedServerRpc;
-            //  NetworkManager.Singleton.OnServerStopped -= OnServerStoppedServerRpc;
+            OnServerStarted();
         }
     }
 
-    [ServerRpc]
-    private void OnServerStartedServerRpc()
+
+    private void OnServerStarted()
     {
-        Debug.Log("Setting up enemy spawner");
         //  ApplyExistingEnemyArrows();
         FindEnemySpawnPositions();
         FindEnemyConfig();
@@ -73,7 +60,7 @@ public class EnemySpawner : MonoBehaviour
                 var random = new Unity.Mathematics.Random((uint)System.DateTime.Now.Ticks);
                 Vector3 spawnPosition = GetSpawnPosition(_spawnedRogueEnemyCount);
                 spawnPosition += new Vector3(random.NextFloat(-5f, 5f), 0, random.NextFloat(-5f, 5f));
-                SpawnRogueEnemyServerRpc(spawnPosition);
+                SpawnRogueEnemy(spawnPosition);
                 _spawnedRogueEnemyCount++;
                 _RogueEnemySpawnTimer = _RogueEnemySpawnCooldown;
             }
@@ -92,8 +79,7 @@ public class EnemySpawner : MonoBehaviour
                 var random = new Unity.Mathematics.Random((uint)System.DateTime.Now.Ticks);
                 Vector3 spawnPosition = GetSpawnPosition(_spawnedSlimeEnemyCount);
                 spawnPosition += new Vector3(random.NextFloat(-5f, 5f), 0, random.NextFloat(-5f, 5f));
-                SpawnSlimeEnemyServerRpc(spawnPosition);
-
+                SpawnSlimeEnemy(spawnPosition);
                 _spawnedSlimeEnemyCount++;
                 _SlimeEnemySpawnTimer = _SlimeEnemySpawnCooldown;
             }
@@ -103,8 +89,7 @@ public class EnemySpawner : MonoBehaviour
         }
     }
 
-    [ServerRpc]
-    private void SpawnRogueEnemyServerRpc(Vector3 spawnPosition)
+    private void SpawnRogueEnemy(Vector3 spawnPosition)
     {
         if (_rogueEnemyPrefab != null)
         {
@@ -112,23 +97,17 @@ public class EnemySpawner : MonoBehaviour
                 Instantiate(_rogueEnemyPrefab, spawnPosition, Quaternion.identity, gameObject.transform);
             spawnedEnemy.GetComponent<NetworkObject>().Spawn();
             TargetingManager.Instance.AddEnemyToTargetingList(spawnedEnemy.GetComponent<Enemy>());
-            //  SpawnEnemyForClientRpc(spawnedEnemy);
         }
     }
-    //
-    // [ClientRpc]
-    // private void SpawnEnemyForClientRpc(GameObject spawnedEnemy)
-    // {
-    // }
 
-    [ServerRpc]
-    private void SpawnSlimeEnemyServerRpc(Vector3 spawnPosition)
+    private void SpawnSlimeEnemy(Vector3 spawnPosition)
     {
         if (_slimeEnemyPrefab != null)
         {
-            GameObject spawnedEnemy = Instantiate(_slimeEnemyPrefab, spawnPosition, Quaternion.identity);
+            GameObject spawnedEnemy =
+                Instantiate(_slimeEnemyPrefab, spawnPosition, Quaternion.identity, gameObject.transform);
             spawnedEnemy.GetComponent<NetworkObject>().Spawn();
-            //  spawnedEnemy.GetComponent<Enemy>().InitializeEnemy();
+            TargetingManager.Instance.AddEnemyToTargetingList(spawnedEnemy.GetComponent<Enemy>());
         }
     }
 
@@ -149,23 +128,6 @@ public class EnemySpawner : MonoBehaviour
         _SlimeEnemySpawnTimer = _SlimeEnemySpawnCooldown;
     }
 
-    // private void ApplyExistingEnemyArrows()
-    // {
-    //     //  SpawnEnemyArrows();
-    //     var enemiesTransform = GameObject.Find("Enemies")?.transform;
-    //     if (enemiesTransform != null)
-    //     {
-    //         foreach (Transform child in enemiesTransform)
-    //         {
-    //             var enemy = child.GetComponent<Rogue>();
-    //             if (enemy != null)
-    //             {
-    //                 enemy.InstantiateArrowServer();
-    //             }
-    //         }
-    //     }
-    // }
-
 
     private void FindEnemySpawnPositions()
     {
@@ -178,7 +140,6 @@ public class EnemySpawner : MonoBehaviour
         }
 
         _enemySpawnLocations = new Transform[spawnLocationParent.transform.childCount];
-
         for (int i = 0; i < spawnLocationParent.transform.childCount; i++)
         {
             _enemySpawnLocations[i] = spawnLocationParent.transform.GetChild(i);
@@ -190,20 +151,4 @@ public class EnemySpawner : MonoBehaviour
             spawnPositions[i] = _enemySpawnLocations[i].position;
         }
     }
-
-    // private void SpawnEnemyArrows()
-    // {
-    //     var enemiesTransform = GameObject.Find("Enemies")?.transform;
-    //     if (enemiesTransform != null)
-    //     {
-    //         foreach (Transform child in enemiesTransform)
-    //         {
-    //             var enemy = child.GetComponent<Enemy>();
-    //             if (enemy != null)
-    //             {
-    //                 enemy.InstantiateArrowServer();
-    //             }
-    //         }
-    //     }
-    // }
 }

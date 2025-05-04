@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 7801895876235266027}
   - component: {fileID: 6720401888809174077}
-  - component: {fileID: 2406308509100318415}
   m_Layer: 0
   m_Name: Managers
   m_TagString: Untagged
@@ -33,6 +32,7 @@ Transform:
   m_Children:
   - {fileID: 4464205841933766465}
   - {fileID: 7869329456827020933}
+  - {fileID: 6706703742790433198}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6720401888809174077
@@ -60,21 +60,54 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &2406308509100318415
+--- !u!1 &8917911649148835584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6706703742790433198}
+  - component: {fileID: 6280857316363003393}
+  m_Layer: 0
+  m_Name: RespawnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6706703742790433198
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8917911649148835584}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7801895876235266027}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6280857316363003393
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4994959905079220019}
-  m_Enabled: 0
+  m_GameObject: {fileID: 8917911649148835584}
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c71552cd67eabf489fab4fe0d80a0f9, type: 3}
+  m_Script: {fileID: 11500000, guid: 499fcf6736d96b64d89f839fb5ce96ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
-  keyPrefab: {fileID: 8050255731901760503, guid: 1d9ae894a89fd38449f1ce889f52d1ad, type: 3}
-  startGame: 1
+  _respawnPlayerPanel: {fileID: 0}
+  _countdownTimeText: {fileID: 0}
+  _playerDeadLayer: 11
 --- !u!1 &8925114654448909485
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,12 +10,8 @@ public class Rogue : AnimatedEnemy
     [SerializeField] private GameObject weapon;
     private Arrow _arrowComponent;
     private float _shootingTimer;
-    private bool _isCrossbowLoaded;
     private bool _isAiming;
     private Vector3 _lookingDirection;
-    private bool _targetLocked;
-    private Collider[] hitColliders;
-
     private NetworkObject _instantiatedArrow;
     private Transform _arrowSpawnPoint;
     private Rigidbody _arrowRigidbody;
@@ -66,8 +62,6 @@ public class Rogue : AnimatedEnemy
 
 
         InstantiateArrow();
-
-        hitColliders = new Collider[NetworkManager.Singleton.ConnectedClients.Count];
     }
 
 
@@ -79,7 +73,6 @@ public class Rogue : AnimatedEnemy
         _arrowComponent = _instantiatedArrow.GetComponent<Arrow>();
         _arrowRigidbody = _instantiatedArrow.GetComponent<Rigidbody>();
         _arrowComponent.SetTargetTransform(_arrowSpawnPoint.transform);
-        _isCrossbowLoaded = true;
     }
 
     private void Update()
@@ -97,36 +90,16 @@ public class Rogue : AnimatedEnemy
         }
     }
 
+    protected override void AimAtTarget()
+    {
+        if (!_instantiatedArrow.gameObject.activeSelf)
+        {
+            _enemyManager.enemyEvents.EnemyReload();
+            return;
+        }
 
-    // [ServerRpc]
-    // private void ScanForCollisionServerRpc()
-    // {
-    //     if (_isCrossbowLoaded && _shootingTimer <= 0)
-    //     {
-    //         int numColliders = Physics.OverlapSphereNonAlloc(transform.position, enemySettings.detectionRange,
-    //             hitColliders,
-    //             enemySettings.targetLayer);
-    //         if (numColliders > 0)
-    //         {
-    //             Collider closestCollider = null;
-    //             float closestDistance = float.MaxValue;
-    //
-    //             for (int i = 0; i < numColliders; i++)
-    //             {
-    //                 float distance = Vector3.Distance(transform.position, hitColliders[i].transform.position);
-    //                 if (distance < closestDistance)
-    //                 {
-    //                     closestDistance = distance;
-    //                     closestCollider = hitColliders[i];
-    //                 }
-    //             }
-    //
-    //             _targetLocked = true;
-    //             GameObject targetObject = closestCollider.gameObject;
-    //             
-    //         }
-    //     }
-    // }
+        base.AimAtTarget();
+    }
 
     private void RotateTowardsTarget()
     {
@@ -141,7 +114,6 @@ public class Rogue : AnimatedEnemy
     {
         _enemyManager.enemyEvents.EnemyAttack();
         _shootingTimer = enemySettings.shootingDelay;
-        _isCrossbowLoaded = false;
     }
 
     private void TargetShotEvent()
@@ -155,7 +127,16 @@ public class Rogue : AnimatedEnemy
     {
         _arrowRigidbody.linearVelocity = Vector3.zero;
         _arrowComponent.SetTargetTransform(_arrowSpawnPoint.transform);
-        _targetLocked = false;
-        _isCrossbowLoaded = true;
+        NetworkObjectReference arrowReference = _instantiatedArrow;
+        EnableArrowClientRpc(arrowReference);
+    }
+
+    [ClientRpc]
+    private void EnableArrowClientRpc(NetworkObjectReference arrowReference)
+    {
+        if (arrowReference.TryGet(out NetworkObject arrowToEnable))
+        {
+            arrowToEnable.gameObject.SetActive(true);
+        }
     }
 }

@@ -46,7 +46,6 @@ public class EnemyAnimator : MonoBehaviour
 
     private void ReceiveTargetAimedEventFromAnimator()
     {
-        Debug.Log("ReceiveTargetAimedEventFromAnimator");
         receiveTargetAimedEventFromAnimator?.Invoke();
     }
 
@@ -57,7 +56,6 @@ public class EnemyAnimator : MonoBehaviour
 
     private void ReceiveTargetShotEventFromAnimator()
     {
-        Debug.Log("ReceiveTargetShotEventFromAnimator");
         receiveTargetShotEventFromAnimator?.Invoke();
     }
 

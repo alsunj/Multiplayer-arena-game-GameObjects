@@ -1,4 +1,3 @@
-using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -69,9 +68,5 @@ public class PlayerAnimator : NetworkBehaviour
     private void SetPlayerDefence(bool state)
     {
         _animator.SetBool(IS_DEFENDING, state);
-        // if (state)
-        // {
-        //     _animator.CrossFade(IS_DEFENDING, 1f);
-        // }
     }
 }

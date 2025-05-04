@@ -48,7 +48,7 @@ public class AnimatedEnemy : Enemy
     //     _enemyManager.enemyEvents.EnemyReload();
     // }
 
-    protected void AimAtTarget()
+    protected virtual void AimAtTarget()
     {
         _enemyManager.enemyEvents.EnemyAim();
     }

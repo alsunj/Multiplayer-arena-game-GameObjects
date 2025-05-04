@@ -1,18 +1,31 @@
-using Unity.Netcode;
 using UnityEngine;
 
 public class Slime : Enemy
 {
-    private Vector3 _targetPosition;
+    [SerializeField] private EnemySettings enemySettings;
     private Rigidbody _rigidbody;
+    private int _targetLayer;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    public override void OnNetworkSpawn()
     {
+        if (IsServer)
+        {
+            InitializeEnemy(enemySettings.detectionRange, enemySettings.targetLayer);
+        }
     }
 
-    // Update is called once per frame
-    void Update()
+    protected override void InitializeEnemy(int detectionRange, LayerMask targetLayerMask)
     {
+        base.InitializeEnemy(detectionRange, targetLayerMask);
+        _rigidbody = GetComponent<Rigidbody>();
+    }
+
+    private void Update()
+    {
+        if (Target)
+        {
+            _rigidbody.linearVelocity = (Target.position - transform.position).normalized * enemySettings.speed;
+        }
     }
 }
