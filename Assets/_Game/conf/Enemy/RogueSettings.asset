@@ -15,7 +15,7 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 512
-  detectionRange: 10
+  detectionRange: 80
   shootingRange: 15
   shootingDelay: 5
   speed: 0

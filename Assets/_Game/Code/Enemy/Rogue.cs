@@ -9,7 +9,7 @@ public class Rogue : AnimatedEnemy
     [SerializeField] private GameObject arrow;
     [SerializeField] private GameObject weapon;
     private Arrow _arrowComponent;
-    private float _shootingTimer;
+    private float _shootingCooldown;
     private bool _isAiming;
     private Vector3 _lookingDirection;
     private NetworkObject _instantiatedArrow;
@@ -78,9 +78,9 @@ public class Rogue : AnimatedEnemy
     private void Update()
     {
         if (!IsServer) return;
-        if (_shootingTimer > 0)
+        if (_shootingCooldown > 0)
         {
-            _shootingTimer -= Time.deltaTime;
+            _shootingCooldown -= Time.deltaTime;
             return;
         }
 
@@ -113,7 +113,7 @@ public class Rogue : AnimatedEnemy
     private void ShootTarget()
     {
         _enemyManager.enemyEvents.EnemyAttack();
-        _shootingTimer = enemySettings.shootingDelay;
+        _shootingCooldown = enemySettings.shootingDelay;
     }
 
     private void TargetShotEvent()
@@ -130,6 +130,7 @@ public class Rogue : AnimatedEnemy
         NetworkObjectReference arrowReference = _instantiatedArrow;
         EnableArrowClientRpc(arrowReference);
     }
+
 
     [ClientRpc]
     private void EnableArrowClientRpc(NetworkObjectReference arrowReference)

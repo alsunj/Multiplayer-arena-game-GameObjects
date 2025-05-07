@@ -115,13 +115,8 @@ public class ConnectionManager : NetworkBehaviour
 
     private void SetupGameConfig()
     {
-        GameObject cameStartConfigHolder = new GameObject("GameStartConfigHolder");
-        GameStartConfig gameStartConfig = cameStartConfigHolder.AddComponent<GameStartConfig>();
-        gameStartConfig.PlayerAmount = PlayerAmount;
-
         gameConfigHolder = new GameObject("GameConfigHolder");
         GameDataConfig configComponent = gameConfigHolder.AddComponent<GameDataConfig>();
-
         configComponent.RogueEnemyAmount = RogueEnemyAmount;
         configComponent.SlimeEnemyAmount = SlimeEnemyAmount;
 
@@ -220,7 +215,7 @@ public class ConnectionManager : NetworkBehaviour
 
     private void PrepareGameLoadSceneForServerAsync()
     {
-        NetworkManager.Singleton.SceneManager.LoadScene("SC", LoadSceneMode.Additive);
+        NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Additive);
         NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoadCompleted;
     }
 

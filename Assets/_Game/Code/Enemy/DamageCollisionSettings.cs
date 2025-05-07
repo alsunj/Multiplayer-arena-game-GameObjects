@@ -5,4 +5,5 @@ public class DamageCollisionSettings : ScriptableObject
 {
     public int damageAmount;
     public LayerMask targetLayer;
+    public LayerMask terrainLayer;
 }

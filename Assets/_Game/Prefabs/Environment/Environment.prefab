@@ -91,7 +91,7 @@ Transform:
   m_GameObject: {fileID: 650624935253927002}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.77, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1.81, y: 1.81, z: 1.81}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -582,6 +582,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -674,6 +678,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -765,6 +773,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
       propertyPath: m_Name
       value: rubble_large (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -874,6 +886,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: floor_dirt_large_rocky
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: ceca936363ca6f446a07531901199ca9, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -965,6 +981,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
       propertyPath: m_Name
       value: rubble_half (3)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1058,6 +1078,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1149,6 +1173,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
       propertyPath: m_Name
       value: rubble_large (16)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1242,6 +1270,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1333,6 +1365,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
       propertyPath: m_Name
       value: rubble_half (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1426,6 +1462,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1518,6 +1558,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (13)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1609,6 +1653,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
       propertyPath: m_Name
       value: rubble_half (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1768,6 +1816,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (19)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1925,6 +1977,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
       propertyPath: m_Name
       value: rubble_large (14)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2188,6 +2244,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2279,6 +2339,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
       propertyPath: m_Name
       value: rubble_large (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2372,6 +2436,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (18)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2463,6 +2531,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
       propertyPath: m_Name
       value: rubble_half
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2692,6 +2764,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (17)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2783,6 +2859,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
       propertyPath: m_Name
       value: rubble_large (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2876,6 +2956,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_half (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2967,6 +3051,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
       propertyPath: m_Name
       value: rubble_large (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3060,6 +3148,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3151,6 +3243,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
       propertyPath: m_Name
       value: rubble_large (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3244,6 +3340,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_half (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 87d9e8aa89dc79e47bbc07b25704225c, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3336,6 +3436,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: rubble_large (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3427,6 +3531,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
       propertyPath: m_Name
       value: rubble_large (15)
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 2abc46d65f2e2d7439c7689b3c2142c4, type: 3}
+      propertyPath: m_Layer
+      value: 12
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

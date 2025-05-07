@@ -16,3 +16,6 @@ MonoBehaviour:
   targetLayer:
     serializedVersion: 2
     m_Bits: 512
+  terrainLayer:
+    serializedVersion: 2
+    m_Bits: 4096

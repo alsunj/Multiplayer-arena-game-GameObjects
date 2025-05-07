@@ -5,11 +5,13 @@ public class DamageCollision : NetworkBehaviour
 {
     [SerializeField] private DamageCollisionSettings _damageCollisionSettings;
     private int _targetLayer;
+    private int _terrainLayer;
     private int _damage;
 
     public override void OnNetworkSpawn()
     {
         _targetLayer = GetLayerFromLayerMask(_damageCollisionSettings.targetLayer);
+        _terrainLayer = GetLayerFromLayerMask(_damageCollisionSettings.terrainLayer);
         _damage = _damageCollisionSettings.damageAmount;
     }
 
@@ -24,17 +26,37 @@ public class DamageCollision : NetworkBehaviour
                 if (gameObject.TryGetComponent(out Slime enemyComponent))
                 {
                     TargetingManager.Instance.RemoveEnemyFromTargetingList(enemyComponent);
+                    gameObject.GetComponent<NetworkObject>().Despawn();
+                    Destroy(this);
                 }
 
-                DisableGameObjectClientRpc();
+                if (gameObject.TryGetComponent(out Arrow arrowComponent))
+                {
+                    NetworkObjectReference arrowNetworkObjectReference =
+                        arrowComponent.GetComponent<NetworkObject>();
+                    DisableArrowClientRpc(arrowNetworkObjectReference);
+                }
+            }
+
+            if (other.gameObject.layer == _terrainLayer)
+            {
+                if (gameObject.TryGetComponent(out Arrow arrowComponent))
+                {
+                    NetworkObjectReference arrowNetworkObjectReference =
+                        arrowComponent.GetComponent<NetworkObject>();
+                    DisableArrowClientRpc(arrowNetworkObjectReference);
+                }
             }
         }
     }
 
     [ClientRpc]
-    private void DisableGameObjectClientRpc()
+    private void DisableArrowClientRpc(NetworkObjectReference arrowReference)
     {
-        gameObject.SetActive(false);
+        if (arrowReference.TryGet(out NetworkObject arrowToEnable))
+        {
+            arrowToEnable.gameObject.SetActive(false);
+        }
     }
 
     public static int GetLayerFromLayerMask(LayerMask layerMask)
