@@ -2,10 +2,14 @@
 
 ## Testing:
 
-### Locally
+### Locally in Unity Ediot
 
 - Run playmode from `ConnectionScene`.
 - Open Virtual players from `Window` -> `MultiPlayer` -> `MultiPlayer Play mode`.
+
+### Test the Build
+
+- Run the build from Build/Loputoo.exe
 
 ### Multiple devices
 
