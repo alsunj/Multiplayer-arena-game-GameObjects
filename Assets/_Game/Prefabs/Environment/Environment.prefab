@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5647974449618258513}
+  - component: {fileID: 8466409412588946250}
   m_Layer: 0
   m_Name: EnemySpawnLocations
   m_TagString: Untagged
@@ -25,7 +26,7 @@ Transform:
   m_GameObject: {fileID: 354072136138752549}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -35,6 +36,19 @@ Transform:
   - {fileID: 5019612241553091319}
   m_Father: {fileID: 3251327355353088423}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8466409412588946250
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 354072136138752549}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a22d62560c8f61a4fbd55236631e8334, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  radius: 5
 --- !u!1 &381795952518723057
 GameObject:
   m_ObjectHideFlags: 0
@@ -123,7 +137,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 728568152667097525}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -152,7 +166,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5581542974833947271
 Transform:
   m_ObjectHideFlags: 0
@@ -162,7 +176,7 @@ Transform:
   m_GameObject: {fileID: 1342101318069946295}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -215,7 +229,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5001222007940412494
 Transform:
   m_ObjectHideFlags: 0
@@ -225,7 +239,7 @@ Transform:
   m_GameObject: {fileID: 5250389714568146909}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.7, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -247,7 +261,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2438670058733636552
 Transform:
   m_ObjectHideFlags: 0
@@ -368,7 +382,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5981432708657565925
 Transform:
   m_ObjectHideFlags: 0
@@ -400,7 +414,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1806774946114198236
 Transform:
   m_ObjectHideFlags: 0
@@ -410,7 +424,7 @@ Transform:
   m_GameObject: {fileID: 7584320928867012029}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.9, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -458,7 +472,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 163114042722539874, guid: 835d789898f8f3a4d97189425e75e8f6, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 3307046875
+      value: 2546934904
       objectReference: {fileID: 0}
     - target: {fileID: 163114042722539874, guid: 835d789898f8f3a4d97189425e75e8f6, type: 3}
       propertyPath: InScenePlacedSourceGlobalObjectIdHash
@@ -1708,7 +1722,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1580681325717503087, guid: 525df842114a50742b87e2282140ad02, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1549677047
+      value: 1793678996
       objectReference: {fileID: 0}
     - target: {fileID: 4727207244663773237, guid: 525df842114a50742b87e2282140ad02, type: 3}
       propertyPath: m_Name
@@ -1870,7 +1884,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1580681325717503087, guid: 525df842114a50742b87e2282140ad02, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 1334992784
+      value: 2157953702
       objectReference: {fileID: 0}
     - target: {fileID: 4727207244663773237, guid: 525df842114a50742b87e2282140ad02, type: 3}
       propertyPath: m_Name
@@ -2152,7 +2166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 2408943373
+  GlobalObjectIdHash: 1212816001
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -2630,7 +2644,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3719657908984160168, guid: dc502d59cef13ed40b07aa18bd1a4167, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 870031014
+      value: 745029092
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -2656,7 +2670,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1667863745995374288, guid: 1d9ae894a89fd38449f1ce889f52d1ad, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1667863745995374288, guid: 1d9ae894a89fd38449f1ce889f52d1ad, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2692,7 +2706,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3668773499323874180, guid: 1d9ae894a89fd38449f1ce889f52d1ad, type: 3}
       propertyPath: GlobalObjectIdHash
-      value: 2909008999
+      value: 2706695298
       objectReference: {fileID: 0}
     - target: {fileID: 8050255731901760503, guid: 1d9ae894a89fd38449f1ce889f52d1ad, type: 3}
       propertyPath: m_Name

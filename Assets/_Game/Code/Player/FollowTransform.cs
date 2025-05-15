@@ -1,25 +1,39 @@
 using DG.Tweening;
 using UnityEngine;
 
+/// <summary>
+/// Handles the movement and rotation of a GameObject to follow a target transform or player controls.
+/// </summary>
 public class FollowTransform : MonoBehaviour
 {
-    private ISwitchPlayerMap _targetPlayerControls;
-    private Transform _targetTransform;
-    private Quaternion _startingRotation;
+    private ISwitchPlayerMap _targetPlayerControls; // Interface for managing player control states.
+    private Transform _targetTransform; // The transform to follow.
+    private Quaternion _startingRotation; // The initial rotation of the GameObject.
 
+    [SerializeField]
+    private FollowTransformSettings followTransformSettings; // Settings for movement and rotation behavior.
 
-    [SerializeField] private FollowTransformSettings followTransformSettings;
-
+    /// <summary>
+    /// Initializes the starting rotation of the GameObject.
+    /// </summary>
     private void Start()
     {
         _startingRotation = transform.rotation;
     }
 
+    /// <summary>
+    /// Sets the target player controls to manage during the follow process.
+    /// </summary>
+    /// <param name="targetPlayerControls">The player controls to manage.</param>
     public void SetTargetPlayerControls(ISwitchPlayerMap targetPlayerControls)
     {
         this._targetPlayerControls = targetPlayerControls;
     }
 
+    /// <summary>
+    /// Sets the target transform for the GameObject to follow.
+    /// </summary>
+    /// <param name="targetTransform">The transform to follow.</param>
     public void SetTargetTransform(Transform targetTransform)
     {
         if (targetTransform != null)
@@ -33,6 +47,10 @@ public class FollowTransform : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Removes the target transform and moves the GameObject to a specified position.
+    /// </summary>
+    /// <param name="putDownPosition">The position to move the GameObject to.</param>
     public void RemoveTargetTransform(Vector3 putDownPosition)
     {
         _targetPlayerControls.TurnOffPlayerControls();
@@ -45,6 +63,9 @@ public class FollowTransform : MonoBehaviour
         });
     }
 
+    /// <summary>
+    /// Updates the GameObject's position and rotation to match the target transform.
+    /// </summary>
     private void LateUpdate()
     {
         if (_targetTransform == null)

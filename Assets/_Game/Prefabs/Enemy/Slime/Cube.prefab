@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3234479000206332123}
   - component: {fileID: 5394816119229616792}
   - component: {fileID: 2649082171887839502}
-  - component: {fileID: 6070314325824568771}
+  - component: {fileID: 8688275168607712535}
   m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
@@ -179,7 +179,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ShowTopMostFoldoutHeaderGroup: 1
   enemySettings: {fileID: 11400000, guid: 9fdb93bec43a5104295cc3583f523a20, type: 2}
---- !u!114 &6070314325824568771
+--- !u!114 &8688275168607712535
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

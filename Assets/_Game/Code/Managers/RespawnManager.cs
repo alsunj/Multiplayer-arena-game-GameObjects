@@ -5,18 +5,23 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine;
 
+/// <summary>
+/// Manages the respawn process for players, including UI updates, countdowns, and player reinitialization.
+/// </summary>
 public class RespawnManager : NetworkBehaviour
 {
-    [SerializeField] private GameObject _respawnPlayerPanel;
-    [SerializeField] private TextMeshProUGUI _countdownTimeText;
-    [SerializeField] private int _playerDeadLayer = 11;
-    public static RespawnManager Instance { get; private set; }
+    [SerializeField] private GameObject _respawnPlayerPanel; // UI panel displayed during respawn countdown.
+    [SerializeField] private TextMeshProUGUI _countdownTimeText; // Text element for displaying countdown time.
+    [SerializeField] private int _playerDeadLayer = 11; // Layer assigned to players during respawn.
+    public static RespawnManager Instance { get; private set; } // Singleton instance of the RespawnManager.
 
-    private int _respawnTime = 10;
-    private int _health = 100;
-    private Coroutine _countdownCoroutine;
+    private int _respawnTime = 10; // Time (in seconds) for the respawn countdown.
+    private int _health = 100; // Initial health value for respawned players.
+    private Coroutine _countdownCoroutine; // Reference to the active countdown coroutine.
 
-
+    /// <summary>
+    /// Ensures only one instance of RespawnManager exists and persists across scenes.
+    /// </summary>
     private void Awake()
     {
         if (Instance == null)
@@ -29,6 +34,10 @@ public class RespawnManager : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Initiates the respawn process for a player, including disabling controls and starting the countdown.
+    /// </summary>
+    /// <param name="player">The player GameObject to respawn.</param>
     public void StartRespawnPlayer(GameObject player)
     {
         if (IsServer)
@@ -45,6 +54,10 @@ public class RespawnManager : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Disables player controls for the specified client.
+    /// </summary>
+    /// <param name="clientId">The ID of the client whose controls should be disabled.</param>
     [ClientRpc]
     private void TurnOffPlayerControlsClientRpc(ulong clientId)
     {
@@ -59,6 +72,10 @@ public class RespawnManager : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Displays the respawn UI and starts the countdown for the specified client.
+    /// </summary>
+    /// <param name="clientId">The ID of the client to show the respawn UI for.</param>
     [ClientRpc]
     private void ShowRespawnUIClientRpc(ulong clientId)
     {
@@ -72,6 +89,9 @@ public class RespawnManager : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Handles the respawn countdown and triggers player respawn when the countdown ends.
+    /// </summary>
     private IEnumerator RespawnCountdownCoroutine()
     {
         int currentTime = _respawnTime;
@@ -99,6 +119,10 @@ public class RespawnManager : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Despawns the player object for the specified client.
+    /// </summary>
+    /// <param name="clientId">The ID of the client whose player object should be despawned.</param>
     [ServerRpc(RequireOwnership = false)]
     private void DespawnPlayerServerRpc(ulong clientId)
     {
@@ -112,7 +136,10 @@ public class RespawnManager : NetworkBehaviour
         playerNetworkObjectToRemove.Despawn();
     }
 
-
+    /// <summary>
+    /// Spawns a new player object for the specified client and reinitializes its state.
+    /// </summary>
+    /// <param name="clientId">The ID of the client to spawn a new player for.</param>
     [ServerRpc(RequireOwnership = false)]
     private void RequestSpawnPlayerServerRpc(ulong clientId)
     {

@@ -10,46 +10,164 @@ using UnityEngine.Rendering;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-
+/// <summary>
+/// Manages the connection process for a multiplayer game, including server and client setup,
+/// player spawning, and game start countdown.
+/// </summary>
 public class ConnectionManager : NetworkBehaviour
 {
+    #region UIGameObjectReferences
+
+    /// <summary>
+    /// Panel displayed while waiting for players to join.
+    /// </summary>
     [SerializeField] private GameObject _WaitingPlayerPanel;
+
+    /// <summary>
+    /// Text displaying the number of players needed to start.
+    /// </summary>
     [SerializeField] private TextMeshProUGUI _waitingText;
 
-    //[SerializeField] private GameObject _confirmQuitPanel;
+    /// <summary>
+    /// Panel displayed during the game start countdown.
+    /// </summary>
     [SerializeField] private GameObject _countdownPanel;
-    [SerializeField] private TextMeshProUGUI _countdownText;
-    [SerializeField] private GameObject _connectionPanel;
-    [SerializeField] private TMP_InputField _addressField;
-    [SerializeField] private TMP_InputField _portField;
-    [SerializeField] private TMP_Dropdown _connectionModeDropdown;
-    [SerializeField] private TMP_InputField _playerAmountField;
-    [SerializeField] private TMP_InputField _RogueEnemyAmountField;
-    [SerializeField] private TMP_InputField _SlimeEnemyAmountField;
-    [SerializeField] private GameObject LobbyAmountContainer;
-    [SerializeField] private GameObject RangerAmountContainer;
-    [SerializeField] private GameObject SlimeAmountContainer;
-    [SerializeField] private Button _connectButton;
-    [SerializeField] private int _gameStartCountDownTime;
-    [SerializeField] private float _slimeSpawnCooldownTime;
-    [SerializeField] private float _rogueSpawnCooldownTime;
-    [SerializeField] private GameObject playerPrefab;
-    [SerializeField] private int playerHealth;
 
+    /// <summary>
+    /// Text displaying the countdown timer.
+    /// </summary>
+    [SerializeField] private TextMeshProUGUI _countdownText;
+
+    /// <summary>
+    /// Panel for connection settings.
+    /// </summary>
+    [SerializeField] private GameObject _connectionPanel;
+
+    /// <summary>
+    /// Input field for the server address.
+    /// </summary>
+    [SerializeField] private TMP_InputField _addressField;
+
+    /// <summary>
+    /// Input field for the server port.
+    /// </summary>
+    [SerializeField] private TMP_InputField _portField;
+
+    /// <summary>
+    /// Dropdown to select connection mode (host/client).
+    /// </summary>
+    [SerializeField] private TMP_Dropdown _connectionModeDropdown;
+
+    /// <summary>
+    /// Input field for the number of players.
+    /// </summary>
+    [SerializeField] private TMP_InputField _playerAmountField;
+
+    /// <summary>
+    /// Input field for the number of Rogue enemies.
+    /// </summary>
+    [SerializeField] private TMP_InputField _RogueEnemyAmountField;
+
+    /// <summary>
+    /// Input field for the number of Slime enemies.
+    /// </summary>
+    [SerializeField] private TMP_InputField _SlimeEnemyAmountField;
+
+    /// <summary>
+    /// UI container for lobby-related settings.
+    /// </summary>
+    [SerializeField] private GameObject LobbyAmountContainer;
+
+    /// <summary>
+    /// UI container for Ranger enemy settings.
+    /// </summary>
+    [SerializeField] private GameObject RangerAmountContainer;
+
+    /// <summary>
+    /// UI container for Slime enemy settings.
+    /// </summary>
+    [SerializeField] private GameObject SlimeAmountContainer;
+
+    /// <summary>
+    /// Button to initiate the connection process.
+    /// </summary>
+    [SerializeField] private Button _connectButton;
+
+    /// <summary>
+    /// Cooldown time for spawning Slime enemies.
+    /// </summary>
+    [SerializeField] private float _slimeSpawnCooldownTime;
+
+    /// <summary>
+    /// Cooldown time for spawning Rogue enemies.
+    /// </summary>
+    [SerializeField] private float _rogueSpawnCooldownTime;
+
+    /// <summary>
+    /// Default countdown timer value.
+    /// </summary>
     [SerializeField] private int _startGameCountdownTimer = 10;
 
+    /// <summary>
+    /// Prefab for player objects.
+    /// </summary>
+    [SerializeField] private GameObject playerPrefab;
+
+    /// <summary>
+    /// Initial health for players.
+    /// </summary>
+    [SerializeField] private int playerHealth;
+
+    /// <summary>
+    /// Temporary object to hold game configuration data.
+    /// </summary>
     private GameObject gameConfigHolder;
 
-    private List<ulong> connectedClientIds = new List<ulong>(); // Use a List for dynamic size
+    /// <summary>
+    /// List of connected client IDs.
+    /// </summary>
+    private List<ulong> connectedClientIds = new List<ulong>();
+
+    /// <summary>
+    /// Port number parsed from the input field.
+    /// </summary>
     private ushort Port => ushort.Parse(_portField.text);
+
+    /// <summary>
+    /// Number of players parsed from the input field.
+    /// </summary>
     private int PlayerAmount => int.Parse(_playerAmountField.text);
+
+    /// <summary>
+    /// Number of Rogue enemies parsed from the input field.
+    /// </summary>
     private int RogueEnemyAmount => int.Parse(_RogueEnemyAmountField.text);
+
+    /// <summary>
+    /// Number of Slime enemies parsed from the input field.
+    /// </summary>
     private int SlimeEnemyAmount => int.Parse(_SlimeEnemyAmountField.text);
+
+    /// <summary>
+    /// Server address parsed from the input field.
+    /// </summary>
     private string Address => _addressField.text;
 
+    /// <summary>
+    /// Indicates whether the game start timer is running.
+    /// </summary>
     private bool _timerRunning = false;
+
+    /// <summary>
+    /// Countdown timer value on the server.
+    /// </summary>
     private int _serverCountdown;
 
+    #endregion
+
+    /// <summary>
+    /// Subscribes to UI events when the object is enabled.
+    /// </summary>
     private void OnEnable()
     {
         _connectionModeDropdown.onValueChanged.AddListener(OnConnectionModeChanged);
@@ -57,12 +175,19 @@ public class ConnectionManager : NetworkBehaviour
         OnConnectionModeChanged(_connectionModeDropdown.value);
     }
 
+    /// <summary>
+    /// Unsubscribes from UI events when the object is disabled.
+    /// </summary>
     private void OnDisable()
     {
         _connectionModeDropdown.onValueChanged.RemoveAllListeners();
         _connectButton.onClick.RemoveAllListeners();
     }
 
+    /// <summary>
+    /// Updates the UI based on the selected connection mode (host or client).
+    /// </summary>
+    /// <param name="connectionMode">The selected connection mode.</param>
     private void OnConnectionModeChanged(int connectionMode)
     {
         string buttonLabel;
@@ -92,7 +217,9 @@ public class ConnectionManager : NetworkBehaviour
         buttonText.text = buttonLabel;
     }
 
-
+    /// <summary>
+    /// Handles the connection button click event and starts the host or client based on the selected mode.
+    /// </summary>
     private void OnButtonConnect()
     {
         _connectionPanel.SetActive(false);
@@ -112,17 +239,22 @@ public class ConnectionManager : NetworkBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Sets up the game configuration by creating a temporary object to hold enemy amounts.
+    /// </summary>
     private void SetupGameConfig()
     {
         gameConfigHolder = new GameObject("GameConfigHolder");
         GameDataConfig configComponent = gameConfigHolder.AddComponent<GameDataConfig>();
         configComponent.RogueEnemyAmount = RogueEnemyAmount;
         configComponent.SlimeEnemyAmount = SlimeEnemyAmount;
-
-        //   SceneManager.MoveGameObjectToScene(gameConfigHolder, targetScene);
+        configComponent.SlimeEnemySpawnTimer = _slimeSpawnCooldownTime;
+        configComponent.RogueEnemySpawnTimer = _rogueSpawnCooldownTime;
     }
 
+    /// <summary>
+    /// Starts the server and sets up the host connection.
+    /// </summary>
     private void StartServer()
     {
         NetworkManager.Singleton.GetComponent<UnityTransport>().SetConnectionData(Address, Port);
@@ -132,7 +264,11 @@ public class ConnectionManager : NetworkBehaviour
         CheckConnectedClientAmount();
     }
 
-
+    /// <summary>
+    /// Handles network connection events such as client connections and disconnections.
+    /// </summary>
+    /// <param name="networkManager">The NetworkManager instance.</param>
+    /// <param name="connectionEvent">The connection event data.</param>
     private void OnNetworkConnectionEvent(NetworkManager networkManager, ConnectionEventData connectionEvent)
     {
         if (IsServer)
@@ -142,7 +278,6 @@ public class ConnectionManager : NetworkBehaviour
                 Debug.Log($"Client connected with ID: {connectionEvent.ClientId}");
                 connectedClientIds.Add(connectionEvent.ClientId);
                 Debug.Log($"Connected Client Count: {connectedClientIds.Count}");
-                // Update your UI here based on connectedClientIds.Count
             }
             else if (connectionEvent.EventType == ConnectionEvent.ClientDisconnected)
             {
@@ -155,7 +290,9 @@ public class ConnectionManager : NetworkBehaviour
         }
     }
 
-    //must be executed only by the server
+    /// <summary>
+    /// Checks the number of connected clients and starts the game if the required number is met.
+    /// </summary>
     private void CheckConnectedClientAmount()
     {
         if (connectedClientIds.Count >= PlayerAmount && !_timerRunning)
@@ -168,16 +305,19 @@ public class ConnectionManager : NetworkBehaviour
         }
     }
 
-    //must be executed only by the server
+    /// <summary>
+    /// Begins the game start countdown and notifies clients.
+    /// </summary>
     private void BeginGameStart()
     {
         _serverCountdown = _startGameCountdownTimer;
         StartCoroutine(StartGameTimer());
-        BeginGameStartClientRpc(_serverCountdown); // Initial notification
+        BeginGameStartClientRpc(_serverCountdown);
     }
 
-    //must be executed only by the server
-
+    /// <summary>
+    /// Starts the game countdown timer on the server.
+    /// </summary>
     private IEnumerator StartGameTimer()
     {
         _timerRunning = true;
@@ -187,38 +327,49 @@ public class ConnectionManager : NetworkBehaviour
         {
             yield return new WaitForSeconds(1f);
             _serverCountdown--;
-            UpdateCountdownClientRpc(_serverCountdown); // Update clients with the current value
+            UpdateCountdownClientRpc(_serverCountdown);
         }
 
         UnloadSceneClientRpc("ConnectionScene");
         SpawnPlayers();
-        InvokeDestroyGameObjectClientRpc();
-        Destroy(gameObject);
+        EnemySpawnerManager.Instance.StartEnemySpawnTimers();
+        gameObject.GetComponent<NetworkObject>().Despawn();
     }
 
-    [ClientRpc]
-    private void InvokeDestroyGameObjectClientRpc()
-    {
-        Destroy(gameObject);
-    }
-
+    /// <summary>
+    /// Unloads the specified scene on all clients.
+    /// </summary>
+    /// <param name="sceneName">The name of the scene to unload.</param>
     [ClientRpc]
     private void UnloadSceneClientRpc(string sceneName)
     {
         SceneManager.UnloadSceneAsync(sceneName);
     }
 
+    /// <summary>
+    /// Closes the game start panel.
+    /// </summary>
     private void CloseGameStartPanel()
     {
         _countdownPanel.SetActive(false);
     }
 
+    /// <summary>
+    /// Prepares the server to load the game scene asynchronously.
+    /// </summary>
     private void PrepareGameLoadSceneForServerAsync()
     {
-        NetworkManager.Singleton.SceneManager.LoadScene("TestScene", LoadSceneMode.Additive);
+        NetworkManager.Singleton.SceneManager.LoadScene("SC", LoadSceneMode.Additive);
         NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoadCompleted;
     }
 
+    /// <summary>
+    /// Handles the completion of the scene load event.
+    /// </summary>
+    /// <param name="scenename">The name of the loaded scene.</param>
+    /// <param name="loadscenemode">The mode in which the scene was loaded.</param>
+    /// <param name="clientscompleted">List of clients that completed the load.</param>
+    /// <param name="clientstimedout">List of clients that timed out during the load.</param>
     private void OnSceneLoadCompleted(string scenename, LoadSceneMode loadscenemode, List<ulong> clientscompleted,
         List<ulong> clientstimedout)
     {
@@ -229,7 +380,10 @@ public class ConnectionManager : NetworkBehaviour
         MoveNetworkManagerToNewSceneClientRpc(scenename);
     }
 
-
+    /// <summary>
+    /// Moves the NetworkManager to the new scene on all clients.
+    /// </summary>
+    /// <param name="scenename">The name of the new scene.</param>
     [ClientRpc]
     private void MoveNetworkManagerToNewSceneClientRpc(string scenename)
     {
@@ -238,7 +392,12 @@ public class ConnectionManager : NetworkBehaviour
         SceneManager.SetActiveScene(scene);
     }
 
-
+    /// <summary>
+    /// Checks the completion status of the scene load for all clients.
+    /// </summary>
+    /// <param name="initialConnectedClientIds">List of initially connected client IDs.</param>
+    /// <param name="clientsCompleted">List of clients that completed the load.</param>
+    /// <param name="clientsTimedOut">List of clients that timed out during the load.</param>
     private void CheckSceneLoadCompletion(List<ulong> initialConnectedClientIds, List<ulong> clientsCompleted,
         List<ulong> clientsTimedOut)
     {
@@ -260,7 +419,10 @@ public class ConnectionManager : NetworkBehaviour
         }
     }
 
-
+    /// <summary>
+    /// Notifies clients to begin the game start countdown.
+    /// </summary>
+    /// <param name="initialCountdownValue">The initial countdown value.</param>
     [ClientRpc]
     private void BeginGameStartClientRpc(int initialCountdownValue)
     {
@@ -269,7 +431,10 @@ public class ConnectionManager : NetworkBehaviour
         _countdownText.text = initialCountdownValue.ToString();
     }
 
-
+    /// <summary>
+    /// Updates the remaining player count text on all clients.
+    /// </summary>
+    /// <param name="remainingPlayers">The number of players still needed to start the game.</param>
     [ClientRpc]
     private void UpdatePlayerRemainingTextClientRpc(int remainingPlayers)
     {
@@ -277,19 +442,28 @@ public class ConnectionManager : NetworkBehaviour
         _waitingText.text = $"Waiting for {remainingPlayers} more {playersText} to join...";
     }
 
+    /// <summary>
+    /// Updates the countdown timer text on all clients.
+    /// </summary>
+    /// <param name="currentCountdownValue">The current countdown value.</param>
     [ClientRpc]
     private void UpdateCountdownClientRpc(int currentCountdownValue)
     {
         _countdownText.text = currentCountdownValue.ToString();
     }
 
-
+    /// <summary>
+    /// Opens the countdown panel on all clients.
+    /// </summary>
     [ClientRpc]
     private void OpenCountDownPanelClientRpc()
     {
         CloseGameStartPanel();
     }
 
+    /// <summary>
+    /// Spawns player objects for all connected clients.
+    /// </summary>
     private void SpawnPlayers()
     {
         foreach (ulong clientId in connectedClientIds)
@@ -313,6 +487,9 @@ public class ConnectionManager : NetworkBehaviour
         }
     }
 
+    /// <summary>
+    /// Starts the client and connects to the server.
+    /// </summary>
     private void StartClient()
     {
         UnityTransport transport = NetworkManager.Singleton.GetComponent<UnityTransport>();
@@ -327,5 +504,3 @@ public class ConnectionManager : NetworkBehaviour
         }
     }
 }
-// would be ideal to reject connections if the game has already started but unity does not have a way to do this
-// one way would be rejecting the connections in the OnNetworkConnectionEvent method or setting strange values in server connection data

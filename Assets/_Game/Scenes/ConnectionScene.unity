@@ -333,12 +333,11 @@ MonoBehaviour:
   RangerAmountContainer: {fileID: 1018751068}
   SlimeAmountContainer: {fileID: 1544296584}
   _connectButton: {fileID: 251032852}
-  _gameStartCountDownTime: 2
-  _slimeSpawnCooldownTime: 0.01
-  _rogueSpawnCooldownTime: 0.3
-  playerPrefab: {fileID: 7039287367920326276, guid: 702bb31d143eeaa4792be36b28160445, type: 3}
-  playerHealth: 100
+  _slimeSpawnCooldownTime: 1
+  _rogueSpawnCooldownTime: 2
   _startGameCountdownTimer: 10
+  playerPrefab: {fileID: 7039287367920326276, guid: 702bb31d143eeaa4792be36b28160445, type: 3}
+  playerHealth: 200
 --- !u!114 &529219308
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -653,6 +652,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 309593061376755853, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+      propertyPath: m_text
+      value: "4\u200B"
+      objectReference: {fileID: 0}
     - target: {fileID: 920270909126316112, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -781,6 +784,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3534326167216121825, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+      propertyPath: m_Text
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4034502693420905108, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -868,6 +875,10 @@ PrefabInstance:
     - target: {fileID: 5709095759357969302, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5737202750316455812, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
+      propertyPath: m_Text
+      value: 127.0.0.1
       objectReference: {fileID: 0}
     - target: {fileID: 5802551866461339365, guid: 72327351aa28fbe4fb4c16c3d17e4de5, type: 3}
       propertyPath: m_AnchorMax.y
